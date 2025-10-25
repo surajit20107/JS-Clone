@@ -1,3 +1,5 @@
+import Header from "@/components/Header";
+
 export default function MainLayout({
   children,
 }: {
@@ -5,7 +7,7 @@ export default function MainLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <div>Header</div>
+      <Header />
       <div className="flex-grow">
         {children}
       </div>
