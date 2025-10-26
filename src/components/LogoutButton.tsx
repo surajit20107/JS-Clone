@@ -10,12 +10,12 @@ const LogoutButton = () => {
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
-        onRequest: (ctx) => {
+        onRequest: () => {
           setIsLoading(true);
         },
         onSuccess: () => {
           setIsLoading(false);
-          router.push("/login");
+          router.push("/");
         },
         onError: (ctx) => {
           setIsLoading(false);

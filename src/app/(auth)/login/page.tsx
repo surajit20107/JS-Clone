@@ -1,17 +1,39 @@
 "use client";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignIn() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    alert("form submitted");
+    e.preventDefault();
+    await authClient.signIn.email(
+      {
+        email,
+        password,
+        // callbackURL: "/profile",
+        // rememberMe: true,
+      },
+      {
+        onRequest: () => {
+          setIsLoading(true);
+        },
+        onSuccess: () => {
+          setIsLoading(false);
+          router.push("/");
+        },
+        onError: (ctx) => {
+          setError(ctx.error.message);
+          setIsLoading(false);
+        },
+      },
+    );
   };
 
   return (
