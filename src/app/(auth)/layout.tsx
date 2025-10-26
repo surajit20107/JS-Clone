@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function MainLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -11,13 +11,13 @@ export default async function MainLayout({
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/login");
+  if (session) {
+    redirect("/");
   }
 
   return (
-    <div>
-      <div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow">
         {children}
       </div>
     </div>

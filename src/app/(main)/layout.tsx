@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default async function MainLayout({
   children,
@@ -11,7 +12,7 @@ export default async function MainLayout({
       <div className="flex-grow">
         {children}
       </div>
-      <div>Footer</div>
+      <Footer />
     </div>
   );
 }
