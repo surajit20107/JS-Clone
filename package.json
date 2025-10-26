@@ -1,5 +1,5 @@
 {
-  "name": "clone",
+  "name": "js-clone",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "flowbite-react": "^0.12.9",
+    "better-auth": "^1.3.31",
     "next": "16.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0"

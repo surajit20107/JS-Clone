@@ -1,19 +1,39 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    alert("form submitted");
+    e.preventDefault();
+    await authClient.signUp.email(
+      {
+        email,
+        password,
+        name,
+        callbackURL: "/",
+      },
+      {
+        onRequest: (ctx) => {
+          setIsLoading(true);
+        },
+        onSuccess: (ctx) => {
+          setIsLoading(false);
+          redirect("/");
+        },
+        onError: (ctx) => {
+          setError(ctx.error.message);
+          setIsLoading(false);
+        },
+      },
+    );
   };
 
   return (
@@ -89,23 +109,6 @@ export default function SignUp() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-green-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-green-700"
-              >
-                Confirm password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-green-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
           </div>
