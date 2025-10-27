@@ -18,16 +18,9 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand/Logo Section */}
-          {/* <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold mb-2">JS Clone</h3>
-            <p className="text-gray-400 text-sm">
-              Building amazing experiences with Next.js.
-            </p>
-          </div> */}
-
+      <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:justify-evenly">
+          
           {/* Links Section */}
           <div className="text-center">
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
