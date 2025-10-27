@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { SessionProvider } from "@/components/SessionProvider";
 
 export default async function MainLayout({
   children,
@@ -17,9 +18,9 @@ export default async function MainLayout({
 
   return (
     <div>
-      <div>
-        {children}
-      </div>
+      <SessionProvider session={session}>
+        <div>{children}</div>
+      </SessionProvider>
     </div>
   );
 }

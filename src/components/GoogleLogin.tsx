@@ -21,7 +21,6 @@ export default function GoogleLoginButton({
       const data = await authClient.signIn.social({
         provider: "google",
       });
-      console.log(data)
       router.push("/")
     } catch (error: any) {
       onErrorAction?.(
