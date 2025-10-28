@@ -16,13 +16,13 @@ export default function Header() {
   ];
 
   return (
-    <nav className="bg-blue-600 text-white shadow-lg">
+    <nav className="bg-zinc-800 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
-              MyApp
+              JS Clone
             </Link>
           </div>
 
@@ -33,7 +33,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname === link.href ? "bg-blue-700" : "hover:bg-blue-500"
+                  pathname === link.href ? "bg-zinc-700" : "hover:bg-zinc-500"
                 }`}
               >
                 {link.label}
@@ -82,7 +82,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    pathname === link.href ? "bg-blue-700" : "hover:bg-blue-500"
+                    pathname === link.href ? "bg-zinc-600" : "hover:bg-zinc-500"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >

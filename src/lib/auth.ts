@@ -9,19 +9,35 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+
   session: {
     cookieCache: {
       enabled: true,
       maxAge: 60 * 60 * 24, // 1 day
     },
   },
+
   emailAndPassword: {
     enabled: true,
   },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+
+  // custom fields isAdmin
+  user: {
+    additionalFields: {
+      isAdmin: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: false,
+      },
+    },
+  },
+  
 });

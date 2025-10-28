@@ -19,10 +19,10 @@ export default function Account() {
   const [isEditing, setIsEditing] = useState(false);
 
   const [profileData, setProfileData] = useState({
-    name: session?.user?.name || "",
-    email: session?.user?.name || "",
+    name: session?.user?.name,
+    email: session?.user?.email,
     address: "123 Main St, City, State, ZIP",
-    profileImage: "",
+    profileImage: session?.user?.image,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -78,7 +78,7 @@ export default function Account() {
       },
     });
   };
-
+console.log(session)
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -86,7 +86,7 @@ export default function Account() {
         <div className="container mx-auto px-6 text-center">
           <div className="relative mb-4">
             <Image
-              src={session?.user?.image || profileData.name[0]}
+              src={profileData?.profileImage || "/avatar-placeholder.png"}
               alt="Profile Image"
               width={120}
               height={120}
