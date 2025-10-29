@@ -3,6 +3,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { loginSchema } from "@/lib/schema";
 import GoogleLoginButton from "@/components/GoogleLogin";
 
 export default function SignIn() {
@@ -14,27 +15,36 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await authClient.signIn.email(
-      {
-        email,
-        password,
-        // callbackURL: "/profile",
-        // rememberMe: true,
-      },
-      {
-        onRequest: () => {
-          setIsLoading(true);
+    try {
+      const result = loginSchema.safeParse({ email, password });
+      if (!result.success) {
+        setError(result.error?.issues[0]?.message);
+        return;
+      }
+      await authClient.signIn.email(
+        {
+          email,
+          password,
+          // callbackURL: "/profile",
+          rememberMe: true,
         },
-        onSuccess: () => {
-          setIsLoading(false);
-          router.push("/");
+        {
+          onRequest: () => {
+            setIsLoading(true);
+          },
+          onSuccess: () => {
+            setIsLoading(false);
+            router.push("/");
+          },
+          onError: (ctx) => {
+            setError(ctx.error.message);
+            setIsLoading(false);
+          },
         },
-        onError: (ctx) => {
-          setError(ctx.error.message);
-          setIsLoading(false);
-        },
-      },
-    );
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   return (
