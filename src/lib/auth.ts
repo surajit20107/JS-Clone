@@ -6,6 +6,12 @@ const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db();
 
 export const auth = betterAuth({
+  rateLimit: {
+    enabled: true,
+    window: 60 * 10,
+    max: 5,
+  },
+
   database: mongodbAdapter(db, {
     client,
   }),
@@ -23,12 +29,13 @@ export const auth = betterAuth({
 
   socialProviders: {
     google: {
+      prompt: "select_account",
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
 
-  // custom fields isAdmin
+  // custom user field isAdmin
   user: {
     additionalFields: {
       isAdmin: {
@@ -39,5 +46,4 @@ export const auth = betterAuth({
       },
     },
   },
-  
 });
