@@ -16,7 +16,7 @@ export const registerSchema = z.object({
   password: z
     .string()
     .trim()
-    .min(6, "Password must be at least 6 characters long")
+    .min(8, "Password must be at least 8 characters long")
     .max(100, "Password cannot exceed 100 characters")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -37,7 +37,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .trim()
-    .min(6, "Password must be at least 6 characters long")
+    .min(8, "Password must be at least 8 characters long")
     .max(100, "Password cannot exceed 100 characters")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")

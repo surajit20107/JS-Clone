@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { registerSchema } from "@/lib/schema";
 import GoogleLoginButton from "@/components/GoogleLogin";
 
 export default function SignUp() {
@@ -15,27 +16,38 @@ export default function SignUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await authClient.signUp.email(
-      {
-        email,
-        password,
-        name,
-        callbackURL: "/",
-      },
-      {
-        onRequest: () => {
-          setIsLoading(true);
+    try {
+      // Validate the input data using the zod registerSchema
+      const result = registerSchema.safeParse({ name, email, password });
+      if (!result.success) {
+        setError(result.error?.issues[0]?.message || "Invalid input");
+        return;
+      }
+      // Sign up the user with the provided email and password
+      await authClient.signUp.email(
+        {
+          email,
+          password,
+          name,
+          // callbackURL: "/",
         },
-        onSuccess: () => {
-          setIsLoading(false);
-          router.push("/");
+        {
+          onRequest: () => {
+            setIsLoading(true);
+          },
+          onSuccess: () => {
+            setIsLoading(false);
+            router.push("/");
+          },
+          onError: (ctx) => {
+            setError(ctx.error.message);
+            setIsLoading(false);
+          },
         },
-        onError: (ctx) => {
-          setError(ctx.error.message);
-          setIsLoading(false);
-        },
-      },
-    );
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   return (

@@ -16,11 +16,13 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Validate the input data using the zod loginSchema
       const result = loginSchema.safeParse({ email, password });
       if (!result.success) {
-        setError(result.error?.issues[0]?.message);
+        setError(result.error?.issues[0]?.message || "Invalid input");
         return;
       }
+      // Sign in the user with the provided email and password
       await authClient.signIn.email(
         {
           email,
