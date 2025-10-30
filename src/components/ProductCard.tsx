@@ -5,8 +5,8 @@ import { FaStar, FaShoppingCart } from 'react-icons/fa';
 interface Product {
   imageSrc: string;
   title: string;
-  price: number;
-  originalPrice?: number;
+  price: string;
+  originalPrice?: string;
   rating?: number;
   reviews?: number;
   description?: string;
@@ -29,7 +29,7 @@ export default function ProductCard({ item }: ProductCardProps) {
           src={imageSrc}
           alt={title}
           fill
-          objectFit="cover"
+          style={{ objectFit:"cover" }}
           className="rounded-t-lg"
         />
       </div>

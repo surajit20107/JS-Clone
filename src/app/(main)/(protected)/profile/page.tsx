@@ -2,11 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  FaEdit,
-  FaMapMarkerAlt,
-  FaCreditCard,
-} from "react-icons/fa";
+import { FaEdit, FaMapMarkerAlt, FaCreditCard } from "react-icons/fa";
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +40,6 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Order History Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 max-w-4xl">
@@ -71,13 +66,19 @@ export default function Profile() {
           </div>
           <div className="flex flex-col items-start">
             <div className="flex flex-col w-fit">
-          <button className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-            View All Orders
-          </button>
-          <Link className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors" href="/account">
-            Account Settings
-          </Link>
-          </div>
+              <Link
+                href="/orders"
+                className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+              >
+                View All Orders
+              </Link>
+              <Link
+                className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+                href="/account"
+              >
+                Account Settings
+              </Link>
+            </div>
           </div>
         </div>
       </section>
