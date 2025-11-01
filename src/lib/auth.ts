@@ -38,6 +38,12 @@ export const auth = betterAuth({
   // custom user field isAdmin
   user: {
     additionalFields: {
+      isBanned: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: false,
+      },
       isAdmin: {
         type: "boolean",
         required: true,
