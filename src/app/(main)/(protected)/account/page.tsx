@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSession } from "@/components/SessionProvider";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   FaEdit,
   FaUser,
@@ -78,9 +79,19 @@ export default function Account() {
       },
     });
   };
-
+console.log(session)
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Admin button */}
+      {session?.user?.isAdmin && (
+        <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 flex justify-end">
+          <Link
+            href="/admin"
+            className="inline-block mt-4 mx-2 rounded-md bg-purple-600 px-4 py-2 text-white font-medium hover:bg-blue-700 transition-colors duration-200">
+            🚀 Admin Panel
+          </Link>
+        </div>
+      )}
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-20">
         <div className="container mx-auto px-6 text-center">

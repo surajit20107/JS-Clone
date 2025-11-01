@@ -27,7 +27,7 @@ export default function SignIn() {
         {
           email,
           password,
-          // callbackURL: "/profile",
+          callbackURL: "/",
           rememberMe: true,
         },
         {

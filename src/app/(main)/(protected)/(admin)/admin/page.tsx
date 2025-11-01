@@ -1,32 +1,56 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import {
-  FaUsers,
-  FaShoppingBag,
-  FaBox,
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaEye,
-  FaTimes,
-} from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
+
+type Tab = "users" | "orders" | "products";
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+};
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category?: string;
+  stock?: string;
+  rating?: string;
+};
+
+type ProductForm = {
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+  category: string;
+  stock: string;
+  rating: string;
+};
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState<Tab>("users");
   const [showModal, setShowModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [editingUser, setEditingUser] = useState(null);
-  const [productForm, setProductForm] = useState({
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [productForm, setProductForm] = useState<ProductForm>({
     name: "",
     price: "",
     description: "",
     image: "",
+    category: "",
+    stock: "",
+    rating: "",
   });
   const [userRole, setUserRole] = useState("");
 
   // Sample data (replace with DB fetches)
-  const [users, setUsers] = useState([
+  const [users, setUsers] = useState<User[]>([
     { id: 1, name: "John Doe", email: "john@example.com", role: "Customer" },
     { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Admin" },
   ]);
@@ -48,7 +72,7 @@ export default function AdminDashboard() {
     },
   ]);
 
-  const [products, setProducts] = useState([
+  const [products, setProducts] = useState<Product[]>([
     {
       id: 1,
       name: "SonicWave Headphones",
@@ -65,17 +89,36 @@ export default function AdminDashboard() {
     },
   ]);
 
-  const handleTabChange = (tab) => setActiveTab(tab);
+  const handleTabChange = (tab: Tab) => setActiveTab(tab);
 
-  const openModal = (product = null) => {
+  const openModal = (product: Product | null = null) => {
     setEditingProduct(product);
-    setProductForm(
-      product || { name: "", price: "", description: "", image: "" },
-    );
-    setShowModal(true);
+
+    if (product) {
+      setProductForm({
+        name: product.name,
+        price: String(product.price),
+        description: product.description,
+        image: product.image,
+        category: product.category ?? "",
+        stock: product.stock !== undefined ? String(product.stock) : "",
+        rating: product.rating !== undefined ? String(product.rating) : "",
+      });
+    } else {
+      setProductForm({
+        name: "",
+        price: "",
+        description: "",
+        image: "",
+        category: "",
+        stock: "",
+        rating: "",
+      });
+      setShowModal(true);
+    }
   };
 
-  const openUserModal = (user) => {
+  const openUserModal = (user: User) => {
     setEditingUser(user);
     setUserRole(user.role);
     setShowModal(true);
@@ -87,40 +130,50 @@ export default function AdminDashboard() {
     setEditingUser(null);
   };
 
-  const handleFormChange = (e) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
   };
 
   const handleSaveProduct = () => {
-    if (editingProduct) {
-      setProducts(
-        products.map((p) =>
-          p.id === editingProduct.id ? { ...p, ...productForm } : p,
-        ),
-      );
-    } else {
-      setProducts([...products, { ...productForm, id: Date.now() }]);
-    }
+    const data: Product = {
+      id: editingProduct ? editingProduct.id : Date.now(),
+      name: productForm.name,
+      price: Number(productForm.price),
+      description: productForm.description,
+      image: productForm.image,
+      category: productForm.category || undefined,
+      stock: productForm.stock,
+      rating: productForm.rating,
+    };
+
+    setProducts((prev) =>
+      editingProduct
+        ? prev.map((p) => (p.id === editingProduct.id ? { ...p, ...data } : p))
+        : [...prev, data],
+    );
+
     closeModal();
   };
 
   const handleSaveUserRole = () => {
     setUsers(
       users.map((u) =>
-        u.id === editingUser.id ? { ...u, role: userRole } : u,
+        u.id === editingUser?.id ? { ...u, role: userRole } : u,
       ),
     );
     closeModal();
   };
 
-  const handleOrderStatusChange = (orderId, newStatus) => {
+  const handleOrderStatusChange = (orderId: string, newStatus: string) => {
     setOrders(
       orders.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)),
     );
   };
 
-  const handleDeleteProduct = (id) => {
-    setProducts(products.filter((p) => p.id !== id));
+  const handleDeleteProduct = (id: Number) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
   const renderTabContent = () => {
@@ -257,22 +310,6 @@ export default function AdminDashboard() {
           <p className="text-lg md:text-xl mb-8">
             Manage users, orders, and products efficiently.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="bg-white bg-opacity-20 p-4 rounded-lg">
-              <FaUsers className="mx-auto text-3xl mb-2" />
-              <h3 className="text-xl font-semibold">{users.length} Users</h3>
-            </div>
-            <div className="bg-white bg-opacity-20 p-4 rounded-lg">
-              <FaShoppingBag className="mx-auto text-3xl mb-2" />
-              <h3 className="text-xl font-semibold">{orders.length} Orders</h3>
-            </div>
-            <div className="bg-white bg-opacity-20 p-4 rounded-lg">
-              <FaBox className="mx-auto text-3xl mb-2" />
-              <h3 className="text-xl font-semibold">
-                {products.length} Products
-              </h3>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -283,7 +320,7 @@ export default function AdminDashboard() {
             {["users", "orders", "products"].map((tab) => (
               <button
                 key={tab}
-                onClick={() => handleTabChange(tab)}
+                onClick={() => handleTabChange(tab as Tab)}
                 className={`py-2 px-4 font-semibold capitalize ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
               >
                 {tab}
@@ -375,6 +412,33 @@ export default function AdminDashboard() {
                   name="image"
                   placeholder="Image URL"
                   value={productForm.image}
+                  onChange={handleFormChange}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  name="category"
+                  placeholder="Category"
+                  value={productForm.category}
+                  onChange={handleFormChange}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  name="stock"
+                  placeholder="Stock"
+                  value={productForm.stock}
+                  onChange={handleFormChange}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  name="rating"
+                  placeholder="Rating"
+                  value={productForm.rating}
                   onChange={handleFormChange}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required

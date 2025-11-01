@@ -15,18 +15,17 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.role !== "admin") {
+    if (session === undefined) return; // session is still loading
+    if (!session?.user?.isAdmin) {
       router.push("/");
+    } else {
+      setLoading(false);
     }
   }, [session, router]);
 
-  if (session?.user?.role === "admin") {
-    setLoading(false);
+  if (loading) {
+    return <SkeletonLoader count={10} />;
   }
 
-  return (
-    <>
-      {loading ? <SkeletonLoader count={10} /> : children}
-    </>
-  )
+  return <>{children}</>;
 }
