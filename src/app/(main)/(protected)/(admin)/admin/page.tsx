@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
+import axios from "axios";
+import { productSchema } from "@/lib/schema";
 
 type Tab = "users" | "orders" | "products";
 
@@ -15,7 +17,7 @@ type User = {
 type Product = {
   id: number;
   name: string;
-  price: number;
+  price: string | number;
   description: string;
   image: string;
   category?: string;
@@ -25,12 +27,12 @@ type Product = {
 
 type ProductForm = {
   name: string;
-  price: string;
+  price: number | string;
   description: string;
   image: string;
   category: string;
-  stock: string;
-  rating: string;
+  stock: number | string;
+  rating: number | string;
 };
 
 export default function AdminDashboard() {
@@ -136,26 +138,47 @@ export default function AdminDashboard() {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
   };
 
-  const handleSaveProduct = () => {
-    const data: Product = {
-      id: editingProduct ? editingProduct.id : Date.now(),
-      name: productForm.name,
-      price: Number(productForm.price),
-      description: productForm.description,
-      image: productForm.image,
-      category: productForm.category || undefined,
-      stock: productForm.stock,
-      rating: productForm.rating,
-    };
+  // const handleSaveProduct2 = () => {
+  //   const data: Product = {
+  //     id: editingProduct ? editingProduct.id : Date.now(),
+  //     name: productForm.name,
+  //     price: Number(productForm.price),
+  //     description: productForm.description,
+  //     image: productForm.image,
+  //     category: productForm.category || undefined,
+  //     stock: productForm.stock,
+  //     rating: productForm.rating,
+  //   };
 
-    setProducts((prev) =>
-      editingProduct
-        ? prev.map((p) => (p.id === editingProduct.id ? { ...p, ...data } : p))
-        : [...prev, data],
-    );
+  //   setProducts((prev) =>
+  //     editingProduct
+  //       ? prev.map((p) => (p.id === editingProduct.id ? { ...p, ...data } : p))
+  //       : [...prev, data],
+  //   );
 
-    closeModal();
-  };
+  //   closeModal();
+  // };
+
+  const handleSaveProduct = async () => {
+    try {
+      // convert price, stock, rating to number
+      productForm.price = Number(productForm.price)
+      productForm.stock = Number(productForm.stock)
+      productForm.rating = Number(productForm.rating)
+      // validate productForm
+      const result = productSchema.safeParse(productForm);
+      if (!result.success) {
+        alert(result.error.issues[0].message);
+        return;
+      }
+      const data = await axios.post("/api/product", productForm);
+      alert(data.data?.message);
+      closeModal();
+    } catch (error) {
+      console.error("Error creating product:", error);
+      alert("Filed to create product");
+    }
+  }
 
   const handleSaveUserRole = () => {
     setUsers(
@@ -193,12 +216,11 @@ export default function AdminDashboard() {
                     {user.email} | Role: {user.role}
                   </p>
                 </div>
-                <div className="space-x-2">
+                <div className="space-x-2 space-y-2">
                   <button
                     onClick={() => openUserModal(user)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center"
-                  >
-                    <FaEdit className="mr-1" /> Edit Role
+                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center">
+                    <FaEdit />
                   </button>
                   <button className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">
                     <FaTrash />
@@ -426,7 +448,7 @@ export default function AdminDashboard() {
                   required
                 />
                 <input
-                  type="text"
+                  type="number"
                   name="stock"
                   placeholder="Stock"
                   value={productForm.stock}
@@ -435,13 +457,16 @@ export default function AdminDashboard() {
                   required
                 />
                 <input
-                  type="text"
+                  type="number"
                   name="rating"
                   placeholder="Rating"
                   value={productForm.rating}
                   onChange={handleFormChange}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
+                  min={1}
+                  max={5}
+                  step={1}
                 />
                 <button
                   type="submit"
