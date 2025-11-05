@@ -168,7 +168,8 @@ export default function AdminDashboard() {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
   };
 
-  const handleSaveProduct = async () => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       // convert price, stock, rating to number
       productForm.price = Number(productForm.price);
@@ -284,8 +285,7 @@ export default function AdminDashboard() {
                 <div className="space-x-2 space-y-2">
                   <button
                     onClick={() => openUserModal(user)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center"
-                  >
+                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center">
                     <FaEdit />
                   </button>
                   <button className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">
@@ -365,18 +365,16 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                 </div>
-                <div className="space-x-2 space-y-4">
+                <div className="flex flex-col space-y-4">
                   <button
                     //onClick={() => openModal(product)}
                     onClick={() => handleEditProduct(product)}
-                    className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700"
-                  >
+                    className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700">
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDeleteProduct(product._id)}
-                    className="bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700"
-                  >
+                    className="bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700">
                     <FaTrash />
                   </button>
                 </div>
