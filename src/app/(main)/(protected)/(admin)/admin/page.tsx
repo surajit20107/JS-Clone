@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { productSchema } from "@/lib/schema";
+import { CldUploadButton } from "next-cloudinary";
 
 type Tab = "users" | "orders" | "products";
 
@@ -29,10 +30,10 @@ type ProductForm = {
   name: string;
   price: number | string;
   description: string;
-  image: string;
   category: string;
   stock: number | string;
   rating: number | string;
+  image: string;
 };
 
 export default function AdminDashboard() {
@@ -179,7 +180,9 @@ export default function AdminDashboard() {
       }
       const data = await axios.post("/api/product", productForm);
       alert(data.data?.message);
-      closeModal();
+      if (data.status === 201) {
+        closeModal();
+      }
     } catch (error) {
       console.error("Error creating product:", error);
       alert("Filed to create product");
@@ -255,7 +258,7 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product")
+      alert("Failed to delete product");
     }
   };
 
@@ -354,9 +357,7 @@ export default function AdminDashboard() {
                   />
                   <div>
                     <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-gray-600">
-                      ${product.price.toFixed(2)}
-                    </p>
+                    <p className="text-gray-600">${product.price.toFixed(2)}</p>
                     <p className="text-gray-600 h-12 overflow-hidden">
                       {product.description}
                     </p>
@@ -494,7 +495,7 @@ export default function AdminDashboard() {
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
-                <input
+                {/* <input
                   type="text"
                   name="image"
                   placeholder="Image URL"
@@ -502,7 +503,7 @@ export default function AdminDashboard() {
                   onChange={handleFormChange}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
-                />
+                /> */}
                 <input
                   type="text"
                   name="category"
@@ -533,6 +534,16 @@ export default function AdminDashboard() {
                   max={5}
                   step={1}
                 />
+                <CldUploadButton
+                  uploadPreset="ml_default"
+                  className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold mb-4"
+                  onSuccess={(result: any) => {
+                    const imageUrl = result.info.secure_url;
+                    // const publicId = result.info.public_id;
+                    setProductForm({ ...productForm, image: imageUrl });
+                  }}>
+                  Upload Image
+                </CldUploadButton>
 
                 {editingProduct ? (
                   <button
