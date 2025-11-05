@@ -7,7 +7,7 @@ import { productSchema } from "@/lib/schema";
 // add new product to db (create)
 export async function POST(req: NextRequest) {
   try {
-    const { name, price, description, image, category, stock, rating } = await req.json();
+    const { name, price, description, image, category, stock, rating, imagePublicId } = await req.json();
 
     // validate request body
     const result = productSchema.safeParse({
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       category,
       stock,
       rating,
+      imagePublicId,
     });
 
     await product.save();
