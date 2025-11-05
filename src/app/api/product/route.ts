@@ -4,6 +4,7 @@ import Product from "@/models/product";
 import { connectToDatabase } from "@/lib/mongodb";
 import { productSchema } from "@/lib/schema";
 
+// add new product to db (create)
 export async function POST(req: NextRequest) {
   try {
     const { name, price, description, image, category, stock, rating } = await req.json();
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// get all products from db (read)
 export async function GET() {
   try {
     connectToDatabase();
@@ -68,6 +70,7 @@ export async function GET() {
   }
 }
 
+// edit a product by id (update)
 export async function PUT(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
@@ -130,6 +133,7 @@ export async function PUT(req: Request) {
   }
 }
 
+// remove product from db (delete)
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

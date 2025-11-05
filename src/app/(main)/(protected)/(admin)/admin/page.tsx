@@ -246,8 +246,17 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteProduct = (id: String) => {
-    setProducts((prev) => prev.filter((p) => p._id !== String(id)));
+  const handleDeleteProduct = async (id: String) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      const response = await axios.delete(`/api/product?id=${id}`);
+      if (response.status === 200) {
+        setProducts((prev) => prev.filter((p) => p._id !== String(id)));
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product")
+    }
   };
 
   const renderTabContent = () => {
@@ -327,7 +336,7 @@ export default function AdminDashboard() {
                 onClick={() => openModal()}
                 className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center"
               >
-                <FaPlus className="mr-2" /> Add Product
+                <FaPlus className="mr-1" /> Product
               </button>
             </div>
             {products.map((product) => (
@@ -346,21 +355,24 @@ export default function AdminDashboard() {
                   <div>
                     <h3 className="font-semibold">{product.name}</h3>
                     <p className="text-gray-600">
-                      ${product.price} | {product.description}
+                      ${product.price.toFixed(2)}
+                    </p>
+                    <p className="text-gray-600 h-12 overflow-hidden">
+                      {product.description}
                     </p>
                   </div>
                 </div>
-                <div className="space-x-2">
+                <div className="space-x-2 space-y-4">
                   <button
                     //onClick={() => openModal(product)}
                     onClick={() => handleEditProduct(product)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700"
+                    className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700"
                   >
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDeleteProduct(product._id)}
-                    className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
+                    className="bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700"
                   >
                     <FaTrash />
                   </button>
