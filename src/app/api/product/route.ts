@@ -6,8 +6,7 @@ import { productSchema } from "@/lib/schema";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, price, description, image, category, stock, rating } =
-      await req.json();
+    const { name, price, description, image, category, stock, rating } = await req.json();
 
     // validate request body
     const result = productSchema.safeParse({
@@ -69,12 +68,74 @@ export async function GET() {
   }
 }
 
+export async function PUT(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) {
+    return NextResponse.json(
+      { message: "Product id is required" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const { name, price, description, image, category, stock, rating } = await req.json();
+    
+    const result = productSchema.safeParse({
+      name,
+      price,
+      description,
+      image,
+      category,
+      stock,
+      rating,
+    });
+
+    if (!result.success) {
+      return NextResponse.json(
+        { message: result.error.issues[0].message || "Invalid input data" },
+        { status: 400 },
+      );
+    }
+    
+    await connectToDatabase();
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, {
+      name,
+      price,
+      description,
+      image,
+      category,
+      stock,
+      rating,
+    });
+    
+    if (!updatedProduct) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Product updated successfully" },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return NextResponse.json(
+      { message: "Error updating product" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    
+
     const id = searchParams.get("id");
-    
+
     if (!id) {
       return NextResponse.json(
         { message: "Product id is required" },

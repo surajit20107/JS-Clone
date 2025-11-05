@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
 import axios from "axios";
@@ -15,14 +15,14 @@ type User = {
 };
 
 type Product = {
-  id: number;
+  _id: string;
   name: string;
-  price: string | number;
+  price: number;
   description: string;
   image: string;
   category?: string;
-  stock?: string;
-  rating?: string;
+  stock?: number;
+  rating?: number;
 };
 
 type ProductForm = {
@@ -36,7 +36,7 @@ type ProductForm = {
 };
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<Tab>("users");
+  const [activeTab, setActiveTab] = useState<Tab>("products");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -51,11 +51,7 @@ export default function AdminDashboard() {
   });
   const [userRole, setUserRole] = useState("");
 
-  // Sample data (replace with DB fetches)
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "John Doe", email: "john@example.com", role: "Customer" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Admin" },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [orders, setOrders] = useState([
     {
@@ -74,22 +70,53 @@ export default function AdminDashboard() {
     },
   ]);
 
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      name: "SonicWave Headphones",
-      price: 79.99,
-      description: "Wireless headphones",
-      image: "/product.jpeg",
-    },
-    {
-      id: 2,
-      name: "Wireless Mouse",
-      price: 29.99,
-      description: "Ergonomic mouse",
-      image: "/product.jpeg",
-    },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("/api/order");
+      setOrders(response.data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      alert("Failed to fetch orders");
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("/api/product");
+      console.log(response.data);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      alert("user endpoint not connected");
+      return;
+      // const response = await axios.get("/api/user");
+      // setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      alert("Failed to fetch users");
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "users" && users.length === 0) {
+      fetchUsers();
+    }
+
+    if (activeTab === "orders" && orders.length === 0) {
+      fetchOrders();
+    }
+
+    if (activeTab === "products" && products.length === 0) {
+      fetchProducts();
+    }
+  }, [activeTab]);
 
   const handleTabChange = (tab: Tab) => setActiveTab(tab);
 
@@ -138,33 +165,12 @@ export default function AdminDashboard() {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
   };
 
-  // const handleSaveProduct2 = () => {
-  //   const data: Product = {
-  //     id: editingProduct ? editingProduct.id : Date.now(),
-  //     name: productForm.name,
-  //     price: Number(productForm.price),
-  //     description: productForm.description,
-  //     image: productForm.image,
-  //     category: productForm.category || undefined,
-  //     stock: productForm.stock,
-  //     rating: productForm.rating,
-  //   };
-
-  //   setProducts((prev) =>
-  //     editingProduct
-  //       ? prev.map((p) => (p.id === editingProduct.id ? { ...p, ...data } : p))
-  //       : [...prev, data],
-  //   );
-
-  //   closeModal();
-  // };
-
   const handleSaveProduct = async () => {
     try {
       // convert price, stock, rating to number
-      productForm.price = Number(productForm.price)
-      productForm.stock = Number(productForm.stock)
-      productForm.rating = Number(productForm.rating)
+      productForm.price = Number(productForm.price);
+      productForm.stock = Number(productForm.stock);
+      productForm.rating = Number(productForm.rating);
       // validate productForm
       const result = productSchema.safeParse(productForm);
       if (!result.success) {
@@ -178,7 +184,7 @@ export default function AdminDashboard() {
       console.error("Error creating product:", error);
       alert("Filed to create product");
     }
-  }
+  };
 
   const handleSaveUserRole = () => {
     setUsers(
@@ -195,8 +201,53 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleDeleteProduct = (id: Number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  const handleEditProduct = async (product: Product) => {
+    setEditingProduct(product);
+    setShowModal(true);
+    setProductForm({
+      name: product.name,
+      price: String(product.price),
+      description: product.description,
+      image: product.image,
+      category: product.category ?? "",
+      stock: product.stock !== undefined ? String(product.stock) : "",
+      rating: product.rating !== undefined ? String(product.rating) : "",
+    });
+  };
+
+  const handleUpdateProduct = async (product: Product) => {
+    try {
+      const updatedProductForm = {
+        ...productForm,
+        price: Number(productForm.price),
+        stock: Number(productForm.stock),
+        rating: Number(productForm.rating),
+      };
+
+      const data = await axios.put(
+        `/api/product?id=${product._id}`,
+        updatedProductForm,
+      );
+
+      if (data.status === 200) {
+        // Update the product in the state
+        setProducts((prevProduct) =>
+          prevProduct.map((p) =>
+            p._id === product._id
+              ? ({ ...p, ...updatedProductForm } as Product)
+              : p,
+          ),
+        );
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Error updating product:", error);
+      alert("Failed to update product");
+    }
+  };
+
+  const handleDeleteProduct = (id: String) => {
+    setProducts((prev) => prev.filter((p) => p._id !== String(id)));
   };
 
   const renderTabContent = () => {
@@ -219,7 +270,8 @@ export default function AdminDashboard() {
                 <div className="space-x-2 space-y-2">
                   <button
                     onClick={() => openUserModal(user)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center">
+                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center"
+                  >
                     <FaEdit />
                   </button>
                   <button className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">
@@ -280,7 +332,7 @@ export default function AdminDashboard() {
             </div>
             {products.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
               >
                 <div className="flex items-center">
@@ -300,13 +352,14 @@ export default function AdminDashboard() {
                 </div>
                 <div className="space-x-2">
                   <button
-                    onClick={() => openModal(product)}
+                    //onClick={() => openModal(product)}
+                    onClick={() => handleEditProduct(product)}
                     className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700"
                   >
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => handleDeleteProduct(product.id)}
+                    onClick={() => handleDeleteProduct(product._id)}
                     className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
                   >
                     <FaTrash />
@@ -398,10 +451,10 @@ export default function AdminDashboard() {
               </form>
             ) : (
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSaveProduct();
-                }}
+              // onSubmit={(e) => {
+              //e.preventDefault();
+              //handleSaveProduct();
+              //                }}
               >
                 <input
                   type="text"
@@ -468,12 +521,34 @@ export default function AdminDashboard() {
                   max={5}
                   step={1}
                 />
-                <button
+
+                {editingProduct ? (
+                  <button
+                    type="submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleUpdateProduct(editingProduct);
+                    }}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                  >
+                    Edit Product
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    onClick={handleSaveProduct}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                  >
+                    Add Product
+                  </button>
+                )}
+
+                {/* <button
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
                 >
                   {editingProduct ? "Update" : "Add"} Product
-                </button>
+                </button> */}
               </form>
             )}
           </div>
