@@ -15,7 +15,7 @@ export const sendMail = async (email: string, name: string) => {
     from: '"JS Clone" <no-reply@js-clone.com>',
     to: email,
     subject: `Welcome to JS Clone`,
-    text: `Welcome ${name} 🎉,\nwe are glad to have you onboard`, // plain‑text body
+    text: `Welcome ${name},\nwe are glad to have you onboard 🎉`, // plain‑text body
     //html: "<b>Hello world?</b>",
   })
 }

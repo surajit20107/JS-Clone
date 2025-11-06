@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/lib/schema";
 import GoogleLoginButton from "@/components/GoogleLogin";
+import { inngest } from "@/inngest/client";
 
 export default function SignUp() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function SignUp() {
         return;
       }
       // Sign up the user with the provided email and password
-      await authClient.signUp.email(
+      const data = await authClient.signUp.email(
         {
           email,
           password,
@@ -35,8 +36,18 @@ export default function SignUp() {
           onRequest: () => {
             setIsLoading(true);
           },
-          onSuccess: () => {
+          onSuccess: (ctx) => {
             setIsLoading(false);
+            const user = ctx.data?.user;
+            if (user?.email) {
+              inngest.send({
+                name: "app/user.registered",
+                data: {
+                  email: user.email,
+                  name: user.name,
+                },
+              });
+            }
             router.push("/");
           },
           onError: (ctx) => {
