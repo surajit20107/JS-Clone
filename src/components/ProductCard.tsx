@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { FaStar, FaShoppingCart } from 'react-icons/fa';
 
 interface Product {
-  imageSrc: string;
-  title: string;
+  image: string;
+  name: string;
   price: string;
   originalPrice?: string;
   rating?: number;
@@ -19,15 +19,15 @@ interface ProductCardProps {
 
 export default function ProductCard({ item }: ProductCardProps) {
   // Destructure props from the item object (adjust based on your DB schema)
-  const { imageSrc, title, price, originalPrice, rating, reviews, description, features } = item;
+  const { image, name, price, originalPrice, rating, reviews, description, features } = item;
 
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Product Image */}
       <div className="relative h-48">
         <Image
-          src={imageSrc}
-          alt={title}
+          src={image}
+          alt={name}
           fill
           style={{ objectFit:"cover" }}
           className="rounded-t-lg"
@@ -36,7 +36,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
       {/* Product Details */}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{name}</h3>
         
         {/* Pricing */}
         <div className="flex items-center mb-2">
