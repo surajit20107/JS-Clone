@@ -1,8 +1,11 @@
-"use client"
-import Image from 'next/image';
-import { FaStar, FaShoppingCart } from 'react-icons/fa';
+"use client";
+import Image from "next/image";
+import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { useSession } from "@/components/SessionProvider";
+import { useRouter } from "next/navigation";
 
 interface Product {
+  _id: string;
   image: string;
   name: string;
   price: string;
@@ -18,8 +21,25 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ item }: ProductCardProps) {
+  const session = useSession();
+  const router = useRouter();
+
   // Destructure props from the item object (adjust based on your DB schema)
   const { image, name, price, originalPrice, rating, reviews, description, features } = item;
+
+  const addProductToUserCart = async (userId: string, productId: string) => {
+    alert(`${userId} added ${productId} to cart`)
+  }
+
+  const handleAddToCart = async () => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      router.push("/login");
+      alert("Please login to add product to cart");
+      return;
+    }
+    addProductToUserCart(userId, item._id);
+  }
 
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -71,7 +91,9 @@ export default function ProductCard({ item }: ProductCardProps) {
         </ul>
 
         {/* Add to Cart Button */}
-        <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center">
+        <button
+          onClick={handleAddToCart}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center">
           <FaShoppingCart className="mr-2" />
           Add to Cart
         </button>

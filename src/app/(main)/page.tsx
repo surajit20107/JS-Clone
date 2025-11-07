@@ -15,7 +15,7 @@ export default function Home() {
     revalidateOnFocus: false,
     dedupingInterval: 60 * 60 * 60,
   });
-
+console.log(items)
   if (isLoading) {
     return <SkeletonLoader count={10} />;
   }
