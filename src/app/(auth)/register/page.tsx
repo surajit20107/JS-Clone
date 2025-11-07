@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/lib/schema";
 import GoogleLoginButton from "@/components/GoogleLogin";
-import { inngest } from "@/inngest/client";
+import axios from "axios";
 
 export default function SignUp() {
   const router = useRouter();
@@ -38,16 +38,15 @@ export default function SignUp() {
           },
           onSuccess: (ctx) => {
             setIsLoading(false);
-            const user = ctx.data?.user;
+            const user = ctx?.data?.user || data?.data?.user;
+
             if (user?.email) {
-              inngest.send({
-                name: "app/user.registered",
-                data: {
-                  email: user.email,
-                  name: user.name,
-                },
+              axios.post("/api/user-registered", {
+                email: user.email,
+                name: user.name,
               });
             }
+
             router.push("/");
           },
           onError: (ctx) => {

@@ -1,6 +1,8 @@
-import ProductCard from "@/components/ProductCard"
+"use client";
+import ProductCard from "@/components/ProductCard";
 
 export default function Home() {
+
   const items = [
     {
       id: 1,
@@ -74,5 +76,5 @@ export default function Home() {
         <ProductCard key={item.id} item={item} />
       ))}
     </div>
-  )
+  );
 }

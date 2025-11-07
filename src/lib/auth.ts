@@ -6,11 +6,11 @@ const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db();
 
 export const auth = betterAuth({
-  rateLimit: {
-    enabled: true,
-    window: 60 * 10,
-    max: 5,
-  },
+  // rateLimit: {
+  //   enabled: true,
+  //   window: 60 * 10,
+  //   max: 5,
+  // },
 
   database: mongodbAdapter(db, {
     client,

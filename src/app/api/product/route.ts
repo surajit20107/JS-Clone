@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     await product.save();
 
     return NextResponse.json(
-      { message: "Product created successfully" },
+      { message: "Product created successfully", product },
       { status: 201 },
     );
   } catch (error) {

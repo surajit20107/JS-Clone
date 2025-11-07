@@ -182,8 +182,9 @@ export default function AdminDashboard() {
         return;
       }
       const data = await axios.post("/api/product", productForm);
-      alert(data.data?.message);
+      console.log(data);
       if (data.status === 201) {
+        setProducts((prev) => [...prev, data.data.product])
         closeModal();
       }
     } catch (error) {

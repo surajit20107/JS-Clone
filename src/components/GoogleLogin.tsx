@@ -2,16 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAuthClient } from "better-auth/client";
-import { inngest } from "@/inngest/client";
-
-type AuthUser = {
-  id: string;
-  email: string;
-  name: string;
-  image?: string | null;
-  createdAt: string | Date;
-  updatedAt: string | Date;
-};
 
 type GoogleLoginButtonProps = {
   text: string;
@@ -29,25 +19,9 @@ export default function GoogleLoginButton({
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      const data = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: "google",
       });
-      
-      if ("user" in data && data.user) {
-        const user = data.user as AuthUser;
-        const isNewUser = user.createdAt === user.updatedAt;
-
-        if (isNewUser && user.email) {
-          inngest.send({
-            name: "app/user.registered",
-            data: {
-              email: user?.email,
-              name: user?.name,
-            },
-          });
-        }
-      }
-
       router.push("/");
     } catch (error: any) {
       onErrorAction?.(
