@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface Product {
   _id: string;
@@ -28,7 +29,16 @@ export default function ProductCard({ item }: ProductCardProps) {
   const { image, name, price, originalPrice, rating, reviews, description, features } = item;
 
   const addProductToUserCart = async (userId: string, productId: string) => {
-    alert(`${userId} added ${productId} to cart`)
+    try {
+      const res = await axios.post("/api/user", { userId, productId })
+    if (res.status === 200) {
+      alert("Product added to cart")
+    } else {
+      alert("Failed to add product to cart")
+    }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleAddToCart = async () => {
