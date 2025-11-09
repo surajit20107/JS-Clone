@@ -6,6 +6,18 @@ import ServerError from "@/components/ServerError";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  category: string;
+  stock: number;
+  rating: number;
+  reviews: number
+}
+
 export default function Home() {
   const {
     data: items,
@@ -23,7 +35,7 @@ console.log(items)
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-      {items.map((item) => (
+      {items.map((item: Product) => (
         <ProductCard key={item._id} item={item} />
       ))}
     </div>

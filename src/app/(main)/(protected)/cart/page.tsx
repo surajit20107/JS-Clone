@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import axios from "axios";
@@ -202,9 +203,11 @@ export default function Cart() {
                 Looks like you haven't added anything yet. Start shopping to
                 fill it up!
               </p>
-              <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md">
+              <Link
+                href="/"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md">
                 Continue Shopping
-              </button>
+              </Link>
             </div>
           )}
         </div>

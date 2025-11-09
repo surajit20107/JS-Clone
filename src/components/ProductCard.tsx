@@ -7,9 +7,9 @@ import axios from "axios";
 
 interface Product {
   _id: string;
-  image: string;
   name: string;
-  price: string;
+  price: number;
+  image: string;
   originalPrice?: string;
   rating?: number;
   reviews?: number;
