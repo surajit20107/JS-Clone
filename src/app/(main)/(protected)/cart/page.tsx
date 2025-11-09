@@ -13,12 +13,13 @@ export default function Cart() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        alert(session?.user.id)
+        if (!session?.user?.id) return;
+        
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
 
         if (res.status === 200) {
           console.log(res.data)
-          setCartItems(res.data?.userCart)
+          setCartItems(res.data?.userCart || [])
         }
       } catch (error) {
         console.error(error);
@@ -27,26 +28,26 @@ export default function Cart() {
     };
     
     fetchCartItems();
-  }, []);
+  }, [session?.user?.id]);
 
-  const updateQuantity = (id: number, newQuantity: number) => {
+  const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     setCartItems(
       cartItems.map((item) =>
-        item.productId._id === String(id) ? { ...item, quantity: newQuantity } : item,
+        item.productId._id === id ? { ...item, quantity: newQuantity, totalPrice: item.productId.price * newQuantity } : item,
       ),
     );
   };
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const removeItem = (id: string) => {
+    setCartItems(cartItems.filter((item) => item.productId._id !== id));
   };
 
   const subtotal = cartItems?.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.totalPrice || 0),
     0,
-  );
-  const tax = cartItems?.productId?.price * 0.08; // 8% tax example
+  ) || 0;
+  const tax = subtotal * 0.08; // 8% tax example
   const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50
   const total = subtotal + tax + shipping;
 
@@ -87,23 +88,23 @@ export default function Cart() {
                     className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-center">
                     <Image
                       src={item?.productId?.image || "/product.jpeg"}
-                      alt={item.name || "Product Image"}
+                      alt={item?.productId?.name || "Product Image"}
                       width={100}
                       height={100}
                       className="rounded-lg mb-4 sm:mb-0 sm:mr-4 object-cover"
                     />
                     <div className="flex-1 text-center sm:text-left">
                       <h3 className="font-semibold text-lg text-gray-800">
-                        {item.name}
+                        {item?.productId?.name}
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        ${item.price} each
+                        ${item?.productId?.price?.toFixed(2)} each
                       </p>
                     </div>
                     <div className="flex items-center space-x-3 mt-4 sm:mt-0">
                       <button
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
+                          updateQuantity(item.productId._id, item.quantity - 1)
                         }
                         className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
                       >
@@ -114,7 +115,7 @@ export default function Cart() {
                       </span>
                       <button
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
+                          updateQuantity(item.productId._id, item.quantity + 1)
                         }
                         className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
                       >
@@ -123,10 +124,10 @@ export default function Cart() {
                     </div>
                     <div className="ml-4 text-center sm:text-right mt-4 sm:mt-0">
                       <p className="font-bold text-lg text-gray-800">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ${item.totalPrice?.toFixed(2)}
                       </p>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.productId._id)}
                         className="text-red-500 hover:text-red-700 mt-2 transition-colors"
                       >
                         <FaTrash size={16} />
