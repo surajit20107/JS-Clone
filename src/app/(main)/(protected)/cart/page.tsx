@@ -1,32 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
+import { useSession } from "@/components/SessionProvider";
+import axios from "axios";
 
 export default function Cart() {
-  // Sample cart data (replace with state management like Redux or Context)
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "SonicWave Headphones",
-      price: 79.99,
-      quantity: 1,
-      image: "/product.jpeg",
-    },
-    {
-      id: 2,
-      name: "Wireless Mouse",
-      price: 29.99,
-      quantity: 2,
-      image: "/product.jpeg",
-    },
-  ]);
+  const session = useSession();
+  
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        alert(session?.user.id)
+        const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
+
+        if (res.status === 200) {
+          console.log(res.data)
+          setCartItems(res.data?.userCart)
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error fetching cart details");
+      }
+    };
+    
+    fetchCartItems();
+  }, []);
 
   const updateQuantity = (id: number, newQuantity: number) => {
     if (newQuantity < 1) return;
     setCartItems(
       cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item,
+        item.productId._id === String(id) ? { ...item, quantity: newQuantity } : item,
       ),
     );
   };
@@ -35,11 +42,11 @@ export default function Cart() {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
-  const subtotal = cartItems.reduce(
+  const subtotal = cartItems?.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
-  const tax = subtotal * 0.08; // 8% tax example
+  const tax = cartItems?.productId?.price * 0.08; // 8% tax example
   const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50
   const total = subtotal + tax + shipping;
 
@@ -74,14 +81,13 @@ export default function Cart() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Items List */}
               <div className="xl:col-span-2 space-y-6">
-                {cartItems.map((item) => (
+                {cartItems?.map((item) => (
                   <div
-                    key={item.id}
-                    className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-center"
-                  >
+                    key={item?.productId?._id}
+                    className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-center">
                     <Image
-                      src={item.image}
-                      alt={item.name}
+                      src={item?.productId?.image || "/product.jpeg"}
+                      alt={item.name || "Product Image"}
                       width={100}
                       height={100}
                       className="rounded-lg mb-4 sm:mb-0 sm:mr-4 object-cover"
@@ -91,7 +97,7 @@ export default function Cart() {
                         {item.name}
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        ${item.price.toFixed(2)} each
+                        ${item.price} each
                       </p>
                     </div>
                     <div className="flex items-center space-x-3 mt-4 sm:mt-0">

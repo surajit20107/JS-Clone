@@ -3,10 +3,11 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Cart from "@/models/cart";
 import Product from "@/models/product";
 
+// add product to user cart
 export async function POST(req: Request) {
   try {
     const { userId, productId } = await req.json();
-    
+
     if (!userId || !productId) {
       return NextResponse.json(
         { message: "Missing user Id or product id" },
@@ -51,6 +52,36 @@ export async function POST(req: Request) {
     console.log(error);
     return NextResponse.json(
       { message: "Error adding product to cart", error },
+      { status: 500 },
+    );
+  }
+}
+
+// get user cart items
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          message: "Please login to access your cart",
+        },
+        { status: 401 },
+      );
+    }
+
+    await connectToDatabase();
+
+    const userCart = await Cart.find({ userId }).populate("productId");
+    return NextResponse.json({ userCart }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Error fetching cart items",
+      },
       { status: 500 },
     );
   }

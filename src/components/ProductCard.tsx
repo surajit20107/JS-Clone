@@ -30,7 +30,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
   const addProductToUserCart = async (userId: string, productId: string) => {
     try {
-      const res = await axios.post("/api/user", { userId, productId })
+      const res = await axios.post("/api/cart", { userId, productId })
     if (res.status === 200) {
       alert("Product added to cart")
     } else {
