@@ -5,28 +5,41 @@ import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import axios from "axios";
 
+interface CartItem {
+  _id: string;
+  userId: string;
+  productId: {
+    _id: string;
+    name: string;
+    price: number;
+    image: string;
+  };
+  quantity: number;
+  totalPrice: number;
+}
+
 export default function Cart() {
   const session = useSession();
-  
-  const [cartItems, setCartItems] = useState([]);
+
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
         if (!session?.user?.id) return;
-        
+
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
 
         if (res.status === 200) {
-          console.log(res.data)
-          setCartItems(res.data?.userCart || [])
+          console.log(res.data);
+          setCartItems(res.data?.userCart || []);
         }
       } catch (error) {
         console.error(error);
         alert("Error fetching cart details");
       }
     };
-    
+
     fetchCartItems();
   }, [session?.user?.id]);
 
@@ -34,7 +47,13 @@ export default function Cart() {
     if (newQuantity < 1) return;
     setCartItems(
       cartItems.map((item) =>
-        item.productId._id === id ? { ...item, quantity: newQuantity, totalPrice: item.productId.price * newQuantity } : item,
+        item.productId._id === id
+          ? {
+              ...item,
+              quantity: newQuantity,
+              totalPrice: item.productId.price * newQuantity,
+            }
+          : item,
       ),
     );
   };
@@ -43,10 +62,8 @@ export default function Cart() {
     setCartItems(cartItems.filter((item) => item.productId._id !== id));
   };
 
-  const subtotal = cartItems?.reduce(
-    (sum, item) => sum + (item.totalPrice || 0),
-    0,
-  ) || 0;
+  const subtotal =
+    cartItems?.reduce((sum, item) => sum + (item.totalPrice || 0), 0) || 0;
   const tax = subtotal * 0.08; // 8% tax example
   const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50
   const total = subtotal + tax + shipping;
@@ -85,7 +102,8 @@ export default function Cart() {
                 {cartItems?.map((item) => (
                   <div
                     key={item?.productId?._id}
-                    className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-center">
+                    className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-center"
+                  >
                     <Image
                       src={item?.productId?.image || "/product.jpeg"}
                       alt={item?.productId?.name || "Product Image"}
