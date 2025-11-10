@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import AuthNav from "@/components/AuthNavbar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -73,6 +74,7 @@ export default async function AuthLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
+      <AuthNav />
       <div className="flex-grow">
         {children}
       </div>
