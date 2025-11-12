@@ -137,6 +137,9 @@ export async function DELETE(req: Request) {
       );
     }
 
+    // delete from redis
+    await redis.hdel(`cart:${userId}`, productId);
+
     return NextResponse.json(
       { message: "Cart item deleted successfully" },
       { status: 200 },
