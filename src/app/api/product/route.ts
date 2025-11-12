@@ -7,7 +7,16 @@ import { productSchema } from "@/lib/schema";
 // add new product to db (create)
 export async function POST(req: NextRequest) {
   try {
-    const { name, price, description, image, category, stock, rating, imagePublicId } = await req.json();
+    const {
+      name,
+      price,
+      description,
+      image,
+      category,
+      stock,
+      rating,
+      imagePublicId,
+    } = await req.json();
 
     // validate request body
     const result = productSchema.safeParse({
@@ -73,18 +82,21 @@ export async function GET() {
 
 // edit a product by id (update)
 export async function PUT(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json(
-      { message: "Product id is required" },
-      { status: 400 },
-    );
-  }
-
   try {
-    const { name, price, description, image, category, stock, rating } = await req.json();
-    
+    const { searchParams } = new URL(req.url);
+
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Product id is required" },
+        { status: 400 },
+      );
+    }
+
+    const { name, price, description, image, category, stock, rating } =
+      await req.json();
+
     const result = productSchema.safeParse({
       name,
       price,
@@ -101,7 +113,7 @@ export async function PUT(req: Request) {
         { status: 400 },
       );
     }
-    
+
     await connectToDatabase();
 
     const updatedProduct = await Product.findByIdAndUpdate(id, {
@@ -113,7 +125,7 @@ export async function PUT(req: Request) {
       stock,
       rating,
     });
-    
+
     if (!updatedProduct) {
       return NextResponse.json(
         { message: "Product not found" },
@@ -123,8 +135,8 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(
       { message: "Product updated successfully" },
-      { status: 200 }
-    )
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json(

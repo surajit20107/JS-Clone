@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import axios from "axios";
+// import useSwr from "swr";
 
 interface CartItem {
   _id: string;
@@ -21,6 +22,8 @@ interface CartItem {
 
 export default function Cart() {
   const session = useSession();
+  
+  // const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
@@ -44,23 +47,65 @@ export default function Cart() {
     fetchCartItems();
   }, [session?.user?.id]);
 
-  const updateQuantity = (id: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    setCartItems(
-      cartItems.map((item) =>
-        item.productId._id === id
-          ? {
-              ...item,
-              quantity: newQuantity,
-              totalPrice: item.productId.price * newQuantity,
-            }
-          : item,
-      ),
-    );
+  const updateQuantity = async (productId: string, delta: number) => {
+    if (!session?.user?.id) return;
+
+    try {
+      const endpoint =
+        delta > 0 ? "/api/cart/increment" : "/api/cart/decrement";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session.user.id,
+          productId,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Server error:", res.status);
+        return;
+      }
+
+      const data = await res.json();
+
+      const updatedQty = data.quantity;
+
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.productId._id === productId
+            ? {
+                ...item,
+                quantity: updatedQty,
+                totalPrice: item.productId.price * updatedQty,
+              }
+            : item,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to update quantity", err);
+    }
   };
 
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.productId._id !== id));
+  const removeItem = async (id: string) => {
+    try {
+      const res = await axios.delete("/api/cart", {
+        data: {
+          userId: session?.user?.id,
+          productId: id,
+        },
+      });
+
+      if (res.status !== 200) {
+        alert("Failed");
+      }
+
+      setCartItems(cartItems.filter((item) => item.productId._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const subtotal =
@@ -122,9 +167,7 @@ export default function Cart() {
                     </div>
                     <div className="flex items-center space-x-3 mt-4 sm:mt-0">
                       <button
-                        onClick={() =>
-                          updateQuantity(item.productId._id, item.quantity - 1)
-                        }
+                        onClick={() => updateQuantity(item.productId._id, -1)}
                         className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
                       >
                         <FaMinus size={14} />
@@ -133,9 +176,7 @@ export default function Cart() {
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() =>
-                          updateQuantity(item.productId._id, item.quantity + 1)
-                        }
+                        onClick={() => updateQuantity(item.productId._id, 1)}
                         className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
                       >
                         <FaPlus size={14} />
@@ -205,7 +246,8 @@ export default function Cart() {
               </p>
               <Link
                 href="/"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md">
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md"
+              >
                 Continue Shopping
               </Link>
             </div>

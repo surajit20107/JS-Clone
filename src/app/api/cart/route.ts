@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
+import redis from "@/lib/redis";
 import Cart from "@/models/cart";
 import Product from "@/models/product";
 
@@ -65,23 +66,85 @@ export async function GET(req: Request) {
 
     if (!userId) {
       return NextResponse.json(
-        {
-          message: "Please login to access your cart",
-        },
+        { message: "Please login to access your cart" },
         { status: 401 },
       );
     }
 
     await connectToDatabase();
 
-    const userCart = await Cart.find({ userId }).populate("productId");
+    const dbCart = await Cart.find({ userId }).populate("productId");
+    const redisCart = await redis.hgetall(`cart:${userId}`);
+
+    // 🔁 Sync Redis if empty
+    if (Object.keys(redisCart).length === 0) {
+      for (const item of dbCart) {
+        await redis.hset(
+          `cart:${userId}`,
+          item.productId._id.toString(),
+          item.quantity,
+        );
+      }
+    }
+
+    // 🧠 Merge Redis quantity with DB cart
+    const userCart = dbCart.map((item) => {
+      const redisQty = redisCart[item.productId._id.toString()];
+      const quantity = redisQty ? parseInt(redisQty) : item.quantity;
+
+      return {
+        _id: item._id,
+        userId: item.userId,
+        productId: item.productId,
+        quantity,
+        totalPrice: item.productId.price * quantity,
+      };
+    });
+
     return NextResponse.json({ userCart }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error("Cart fetch error:", error);
     return NextResponse.json(
-      {
-        message: "Error fetching cart items",
-      },
+      { message: "Error fetching cart items" },
+      { status: 500 },
+    );
+  }
+}
+
+// delete cart item
+export async function DELETE(req: Request) {
+  try {
+    const { userId, productId } = await req.json();
+
+    if (!userId || !productId) {
+      return NextResponse.json(
+        { message: "Missing user Id or product id" },
+        { status: 400 },
+      );
+    }
+
+    await connectToDatabase();
+
+    const deletedCartItem = await Cart.findOneAndDelete({
+      userId,
+      productId,
+    });
+
+    if (!deletedCartItem) {
+      return NextResponse.json(
+        { message: "Cart item not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Cart item deleted successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting cart item:", error);
+    return NextResponse.json(
+      { message: "Error deleting cart item" },
       { status: 500 },
     );
   }
