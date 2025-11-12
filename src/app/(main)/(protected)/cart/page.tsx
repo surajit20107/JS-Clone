@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
+import SkeletonLoader from "@/components/SkeletonLoader";
 import axios from "axios";
-// import useSwr from "swr";
 
 interface CartItem {
   _id: string;
@@ -22,25 +22,25 @@ interface CartItem {
 
 export default function Cart() {
   const session = useSession();
-  
-  // const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
         if (!session?.user?.id) return;
-
+        setIsLoading(true);
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
 
         if (res.status === 200) {
-          console.log(res.data);
           setCartItems(res.data?.userCart || []);
         }
       } catch (error) {
         console.error(error);
         alert("Error fetching cart details");
+      } finally {
+        setIsLoading(false)
       }
     };
 
@@ -119,6 +119,10 @@ export default function Cart() {
     console.log("Proceeding to checkout...");
     alert("Redirecting to checkout!");
   };
+
+  if (isLoading) {
+    return <SkeletonLoader count={3} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
