@@ -5,6 +5,8 @@ import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { productSchema } from "@/lib/schema";
 import { CldUploadButton } from "next-cloudinary";
+import { IoIosArrowDropleftCircle } from "react-icons/io";
+import { IoIosArrowDroprightCircle } from "react-icons/io";
 
 type Tab = "users" | "orders" | "products";
 
@@ -38,6 +40,8 @@ type ProductForm = {
 };
 
 export default function AdminDashboard() {
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHashMore] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<Tab>("products");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -87,9 +91,11 @@ export default function AdminDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("/api/product");
+      const response = await axios.get(`/api/product?page=${page}`);
       console.log(response.data);
-      setProducts(response.data);
+      setProducts(response.data.products);
+      setHashMore(response.data.hasMore);
+      console.log("All Products", products);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -184,7 +190,7 @@ export default function AdminDashboard() {
       const data = await axios.post("/api/product", productForm);
       console.log(data);
       if (data.status === 201) {
-        setProducts((prev) => [...prev, data.data.product])
+        setProducts((prev) => [...prev, data.data.product]);
         closeModal();
       }
     } catch (error) {
@@ -286,7 +292,8 @@ export default function AdminDashboard() {
                 <div className="space-x-2 space-y-2">
                   <button
                     onClick={() => openUserModal(user)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center">
+                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center"
+                  >
                     <FaEdit />
                   </button>
                   <button className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">
@@ -345,7 +352,7 @@ export default function AdminDashboard() {
                 <FaPlus className="mr-1" /> Product
               </button>
             </div>
-            {products.map((product) => (
+            {products.map((product: Product) => (
               <div
                 key={product._id}
                 className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
@@ -370,17 +377,42 @@ export default function AdminDashboard() {
                   <button
                     //onClick={() => openModal(product)}
                     onClick={() => handleEditProduct(product)}
-                    className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700">
+                    className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700"
+                  >
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDeleteProduct(product._id)}
-                    className="bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700">
+                    className="bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700"
+                  >
                     <FaTrash />
                   </button>
                 </div>
               </div>
             ))}
+            {/* pagination */}
+            <div className="mt-10">
+              {!hasMore && (
+                <div className="flex justify-center items-center gap-8 md:gap-16">
+                  <button
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={page === 1}
+                  >
+                    <IoIosArrowDropleftCircle size={30} />
+                  </button>
+                  <span className="font-semibold md:font-bold md:text-xl">
+                    {page}
+                  </span>
+                  <button
+                    onClick={() => setPage((prev) => prev + 1)}
+                    disabled={!hasMore}
+                  >
+                    <IoIosArrowDroprightCircle size={30} />
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* pagination end */}
           </div>
         );
       default:
