@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   try {
     const { email, name } = await req.json();
     
-    await inngest.send({
+    inngest.send({
       name: "app/user.registered",
       data: { email, name },
     });
