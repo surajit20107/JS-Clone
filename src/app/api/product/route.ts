@@ -66,11 +66,22 @@ export async function POST(req: NextRequest) {
 }
 
 // get all products from db (read)
-export async function GET() {
+export async function GET(req: Request) {
   try {
     connectToDatabase();
-    const products = await Product.find();
-    return NextResponse.json(products, { status: 200 });
+
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = 15;
+    const skip = (page -1) * limit
+    
+    const products = await Product.find().skip(skip).limit(limit).select("name price image description rating")
+    
+    const hasMore = products.length === limit;
+    
+    return NextResponse.json(
+      { products, hasMore },
+      { status: 200 });
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(

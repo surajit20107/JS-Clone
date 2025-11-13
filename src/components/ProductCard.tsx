@@ -14,7 +14,7 @@ interface Product {
   rating?: number;
   reviews?: number;
   description?: string;
-  features?: string[]
+  features?: string[];
 }
 
 interface ProductCardProps {
@@ -26,20 +26,29 @@ export default function ProductCard({ item }: ProductCardProps) {
   const router = useRouter();
 
   // Destructure props from the item object (adjust based on your DB schema)
-  const { image, name, price, originalPrice, rating, reviews, description, features } = item;
+  const {
+    image,
+    name,
+    price,
+    originalPrice,
+    rating,
+    reviews,
+    description,
+    features,
+  } = item;
 
   const addProductToUserCart = async (userId: string, productId: string) => {
     try {
-      const res = await axios.post("/api/cart", { userId, productId })
-    if (res.status === 200) {
-      alert("Product added to cart")
-    } else {
-      alert("Failed to add product to cart")
-    }
+      const res = await axios.post("/api/cart", { userId, productId });
+      if (res.status === 200) {
+        alert("Product added to cart");
+      } else {
+        alert("Failed to add product to cart");
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleAddToCart = async () => {
     const userId = session?.user?.id;
@@ -49,7 +58,7 @@ export default function ProductCard({ item }: ProductCardProps) {
       return;
     }
     addProductToUserCart(userId, item._id);
-  }
+  };
 
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -59,7 +68,7 @@ export default function ProductCard({ item }: ProductCardProps) {
           src={image}
           alt={name}
           fill
-          style={{ objectFit:"cover" }}
+          style={{ objectFit: "cover" }}
           className="rounded-t-lg"
         />
       </div>
@@ -67,12 +76,14 @@ export default function ProductCard({ item }: ProductCardProps) {
       {/* Product Details */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{name}</h3>
-        
+
         {/* Pricing */}
         <div className="flex items-center mb-2">
-          <span className="text-xl font-bold text-green-600">${price}</span>
+          <span className="text-xl font-bold text-green-600">&#8377;{price}</span>
           {originalPrice && (
-            <span className="text-sm text-gray-500 line-through ml-2">${originalPrice}</span>
+            <span className="text-sm text-gray-500 line-through ml-2">
+              &#8377;{originalPrice}
+            </span>
           )}
         </div>
 
@@ -81,14 +92,20 @@ export default function ProductCard({ item }: ProductCardProps) {
           {[...Array(5)].map((_, i) => (
             <FaStar
               key={i}
-              className={i < (rating ?? 0) ? 'text-yellow-400' : 'text-gray-300'}
+              className={
+                i < (rating ?? 0) ? "text-yellow-400" : "text-gray-300"
+              }
             />
           ))}
-          <span className="text-sm text-gray-600 ml-2">({reviews} reviews)</span>
+          {reviews && (
+            <span className="text-sm text-gray-600 ml-2">
+              {reviews} reviews
+            </span>
+          )}
         </div>
 
         {/* Description */}
-        <p className="text-sm text-gray-700 mb-3">{description}</p>
+        <p className="h-10 my-4 text-sm text-gray-700 mb-3 overflow-hidden">{description}</p>
 
         {/* Features */}
         <ul className="text-xs text-gray-600 mb-4">
@@ -103,7 +120,8 @@ export default function ProductCard({ item }: ProductCardProps) {
         {/* Add to Cart Button */}
         <button
           onClick={handleAddToCart}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center">
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center"
+        >
           <FaShoppingCart className="mr-2" />
           Add to Cart
         </button>

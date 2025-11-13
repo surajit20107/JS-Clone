@@ -166,7 +166,7 @@ export default function Cart() {
                         {item?.productId?.name}
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        ${item?.productId?.price?.toFixed(2)} each
+                        &#8377;{item?.productId?.price?.toFixed(2)} each
                       </p>
                     </div>
                     <div className="flex items-center space-x-3 mt-4 sm:mt-0">
@@ -188,7 +188,7 @@ export default function Cart() {
                     </div>
                     <div className="ml-4 text-center sm:text-right mt-4 sm:mt-0">
                       <p className="font-bold text-lg text-gray-800">
-                        ${item.totalPrice?.toFixed(2)}
+                        &#8377;{item.totalPrice?.toFixed(2)}
                       </p>
                       <button
                         onClick={() => removeItem(item.productId._id)}
@@ -209,28 +209,27 @@ export default function Cart() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal:</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">&#8377;{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Tax (8%):</span>
-                    <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="font-medium">&#8377;{tax.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Shipping:</span>
                     <span className="font-medium">
-                      {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                      {shipping === 0 ? "Free" : `&#8377;${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   <hr className="border-gray-300" />
                   <div className="flex justify-between font-bold text-xl text-gray-900">
                     <span>Total:</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>&#8377;{total.toFixed(2)}</span>
                   </div>
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg">
                   Proceed to Checkout
                 </button>
                 <p className="text-xs text-gray-500 mt-3 text-center">
