@@ -115,9 +115,19 @@ export default function Cart() {
   const total = subtotal + tax + shipping;
 
   const handleCheckout = () => {
-    // Handle checkout (e.g., redirect to payment page)
-    console.log("Proceeding to checkout...");
-    alert("Redirecting to checkout!");
+    try {
+      const res = axios.post("/api/order", {
+      userId: session?.user?.id
+    });
+    if (res.status === 200) {
+      alert("order placed")
+    } else {
+      alert("Failed to place order")
+    }
+    } catch (error) {
+      console.error(error)
+      alert("Error placing order")
+    }
   };
 
   if (isLoading) {
@@ -249,8 +259,7 @@ export default function Cart() {
               </p>
               <Link
                 href="/"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md"
-              >
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md">
                 Continue Shopping
               </Link>
             </div>

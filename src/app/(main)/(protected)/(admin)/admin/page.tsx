@@ -92,7 +92,6 @@ export default function AdminDashboard() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/product?page=${page}`);
-      console.log(response.data);
       setProducts(response.data.products);
       setHashMore(response.data.hasMore);
       console.log("All Products", products);
@@ -122,10 +121,10 @@ export default function AdminDashboard() {
       fetchOrders();
     }
 
-    if (activeTab === "products" && products.length === 0) {
+    if (activeTab === "products") {
       fetchProducts();
     }
-  }, [activeTab]);
+  }, [activeTab, page]);
 
   const handleTabChange = (tab: Tab) => setActiveTab(tab);
 
@@ -355,8 +354,7 @@ export default function AdminDashboard() {
             {products.map((product: Product) => (
               <div
                 key={product._id}
-                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
-              >
+                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
                 <div className="flex items-center">
                   <Image
                     src={product.image}
@@ -375,7 +373,6 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col space-y-4">
                   <button
-                    //onClick={() => openModal(product)}
                     onClick={() => handleEditProduct(product)}
                     className="bg-yellow-600 text-white py-2 px-3 rounded hover:bg-yellow-700"
                   >
@@ -390,27 +387,26 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+
             {/* pagination */}
             <div className="mt-10">
-              {!hasMore && (
-                <div className="flex justify-center items-center gap-8 md:gap-16">
-                  <button
-                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={page === 1}
-                  >
-                    <IoIosArrowDropleftCircle size={30} />
-                  </button>
-                  <span className="font-semibold md:font-bold md:text-xl">
-                    {page}
-                  </span>
-                  <button
-                    onClick={() => setPage((prev) => prev + 1)}
-                    disabled={!hasMore}
-                  >
-                    <IoIosArrowDroprightCircle size={30} />
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-center items-center gap-8 md:gap-16">
+                <button
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                >
+                  <IoIosArrowDropleftCircle size={30} />
+                </button>
+                <span className="font-semibold md:font-bold md:text-xl">
+                  {page}
+                </span>
+                <button
+                  onClick={() => setPage((prev) => prev + 1)}
+                  disabled={!hasMore}
+                >
+                  <IoIosArrowDroprightCircle size={30} />
+                </button>
+              </div>
             </div>
             {/* pagination end */}
           </div>
@@ -496,12 +492,7 @@ export default function AdminDashboard() {
                 </button>
               </form>
             ) : (
-              <form
-              // onSubmit={(e) => {
-              //e.preventDefault();
-              //handleSaveProduct();
-              //                }}
-              >
+              <form>
                 <input
                   type="text"
                   name="name"
@@ -528,15 +519,6 @@ export default function AdminDashboard() {
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
-                {/* <input
-                  type="text"
-                  name="image"
-                  placeholder="Image URL"
-                  value={productForm.image}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                /> */}
                 <input
                   type="text"
                   name="category"
@@ -601,13 +583,6 @@ export default function AdminDashboard() {
                     Add Product
                   </button>
                 )}
-
-                {/* <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                >
-                  {editingProduct ? "Update" : "Add"} Product
-                </button> */}
               </form>
             )}
           </div>
