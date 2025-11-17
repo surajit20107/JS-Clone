@@ -15,8 +15,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Fetch quantities from Redis
-    const redisCart = await redis.hgetall(`cart:${userId}`);
+    // Fetch quantities from Redis if available
+    let redisCart: Record<string, string> = {};
+    try {
+      if (redis) {
+        redisCart = await redis.hgetall(`cart:${userId}`);
+      }
+    } catch (error) {
+      console.error("Redis error:", error);
+      // Continue with MongoDB quantities if Redis fails
+    }
 
     // Map cart items with Redis quantities and calculate total
     const products = userCart.map((item) => {
@@ -26,12 +34,15 @@ export async function POST(req: Request) {
       return {
         product: item.productId._id,
         quantity,
-        price: item.productId.price * quantity,
       };
     });
 
     // Calculate total price using Redis quantities
-    const totalPrice = products.reduce((sum, item) => sum + item.price, 0);
+    const totalPrice = userCart.reduce((sum, item) => {
+      const redisQty = redisCart[item.productId._id.toString()];
+      const quantity = redisQty ? parseInt(redisQty) : item.quantity;
+      return sum + (item.productId.price * quantity);
+    }, 0);
 
     // Create new order with all required fields
     const newOrder = new Order({
@@ -58,8 +69,13 @@ export async function POST(req: Request) {
     await Cart.deleteMany({ userId });
 
     // Clear cart cache if using Redis
-    if (redis) {
-      await redis.del(`cart:${userId}`);
+    try {
+      if (redis) {
+        await redis.del(`cart:${userId}`);
+      }
+    } catch (error) {
+      console.error("Redis cleanup error:", error);
+      // Continue even if Redis cleanup fails
     }
 
     return NextResponse.json(
