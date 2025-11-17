@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import useSwr from "swr";
 import { useSession } from "@/components/SessionProvider";
 import {
@@ -40,14 +39,14 @@ export default function Orders() {
 
   const { data: orders, error } = useSwr(
     session?.user?.id ? `/api/order?userId=${session.user.id}` : null,
-    (url) => fetch(url).then((res) => res.json())
+    (url) => fetch(url).then((res) => res.json()),
   );
 
   const filteredOrders = orders?.filter
     ? orders.filter(
         (order: Order) =>
           order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.status.toLowerCase().includes(searchTerm.toLowerCase())
+          order.status.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -103,7 +102,8 @@ export default function Orders() {
                         Order #{order._id.slice(-8).toUpperCase()}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        Date: {new Date(order.createdAt).toLocaleDateString()} | Total: ₹{order.totalPrice.toFixed(2)}
+                        Date: {new Date(order.createdAt).toLocaleDateString()} |
+                        Total: ₹{order.totalPrice.toFixed(2)}
                       </p>
                       <p className="text-sm text-gray-600">
                         Payment: {order.paymentMethod} ({order.paymentStatus})
@@ -156,16 +156,20 @@ export default function Orders() {
                             <div className="flex-1">
                               <p className="font-medium">{item.product.name}</p>
                               <p className="text-sm text-gray-600">
-                                Qty: {item.quantity} | ₹{item.product.price.toFixed(2)}
+                                Qty: {item.quantity} | ₹
+                                {item.product.price.toFixed(2)}
                               </p>
                             </div>
                           </div>
                         ))}
                       </div>
                       <div className="mt-4 border-t pt-4">
-                        <h4 className="font-semibold mb-2">Delivery Address:</h4>
+                        <h4 className="font-semibold mb-2">
+                          Delivery Address:
+                        </h4>
                         <p className="text-sm text-gray-600">
-                          {order.deliveryAddress}, {order.deliveryCity}, {order.deliveryState}
+                          {order.deliveryAddress}, {order.deliveryCity},{" "}
+                          {order.deliveryState}
                         </p>
                       </div>
                     </div>
