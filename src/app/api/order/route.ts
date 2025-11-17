@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Order from "@/models/order";
 import Cart from "@/models/cart";
+import Product from "@/models/product";
+import redis from "@/lib/redis";
 
 export async function POST(req: Request) {
   const { userId } = await req.json();
@@ -21,11 +23,9 @@ export async function POST(req: Request) {
         totalPrice: item.totalPrice,
       };
     });
-
+console.log(orderItems)
     const newOrder = new Order({
-      userId,
-      items: orderItems,
-      total: userCart.reduce((sum, item) => sum + item.totalPrice, 0),
+      
     });
 
     await newOrder.save();

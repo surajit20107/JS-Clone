@@ -80,6 +80,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    deliveryEmail: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true },
 );
