@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useSwr from "swr";
+import { useSession } from "@/components/SessionProvider";
 import {
   FaSearch,
   FaChevronDown,
@@ -11,6 +12,7 @@ import {
 } from "react-icons/fa";
 
 export default function Orders() {
+  const session = useSession();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
@@ -27,60 +29,11 @@ export default function Orders() {
     }[];
   };
 
-  // Sample orders data (replace with DB fetch)
-  const orders: Order[] = [
-    {
-      id: "ORD-12345",
-      date: "Oct 10, 2023",
-      total: "$79.99",
-      status: "Delivered",
-      items: [
-        {
-          name: "SonicWave Headphones",
-          price: "$79.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      id: "ORD-12346",
-      date: "Sep 15, 2023",
-      total: "$129.98",
-      status: "Shipped",
-      items: [
-        {
-          name: "Wireless Mouse",
-          price: "$29.99",
-          image: "/product.jpeg",
-          quantity: 2,
-        },
-        {
-          name: "Keyboard",
-          price: "$69.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      id: "ORD-12347",
-      date: "Aug 20, 2023",
-      total: "$49.99",
-      status: "Processing",
-      items: [
-        {
-          name: "USB Cable",
-          price: "$49.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-  ];
+  const { data: orders } = useSwr(`/api/orders?userId=${session?.user.id}`, (url) =>
+    fetch(url).then((res) => res.json()))
 
   const filteredOrders = orders.filter(
-    (order) =>
+    (order: Order) =>
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.status.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -120,7 +73,7 @@ export default function Orders() {
           {/* Orders List */}
           <div className="space-y-4">
             {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+              filteredOrders.map((order: Order) => (
                 <div
                   key={order.id}
                   className="bg-gray-100 p-4 rounded-lg shadow-md"
