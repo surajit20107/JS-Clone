@@ -46,7 +46,6 @@ const orderSchema = new mongoose.Schema(
     },
     paymentSignature: {
       type: String,
-      required: true,
     },
     paymentDate: {
       type: Date,

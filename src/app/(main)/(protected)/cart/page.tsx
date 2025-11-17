@@ -40,7 +40,7 @@ export default function Cart() {
         console.error(error);
         alert("Error fetching cart details");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     };
 
@@ -114,19 +114,18 @@ export default function Cart() {
   const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50
   const total = subtotal + tax + shipping;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     try {
-      const res = axios.post("/api/order", {
-      userId: session?.user?.id
-    });
-    if (res.status === 200) {
-      alert("order placed")
-    } else {
-      alert("Failed to place order")
-    }
+      const res = await axios.post("/api/order", {
+        userId: session?.user?.id,
+      });
+      console.log(res);
+      if (res.status === 200) {
+        alert("order placed");
+      }
     } catch (error) {
-      console.error(error)
-      alert("Error placing order")
+      console.error(error);
+      alert("Error placing order");
     }
   };
 
@@ -219,7 +218,9 @@ export default function Cart() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal:</span>
-                    <span className="font-medium">&#8377;{subtotal.toFixed(2)}</span>
+                    <span className="font-medium">
+                      &#8377;{subtotal.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Tax (8%):</span>
@@ -228,7 +229,9 @@ export default function Cart() {
                   <div className="flex justify-between text-gray-700">
                     <span>Shipping:</span>
                     <span className="font-medium">
-                      {shipping === 0 ? "Free" : `&#8377;${shipping.toFixed(2)}`}
+                      {shipping === 0
+                        ? "Free"
+                        : `&#8377;${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   <hr className="border-gray-300" />
@@ -239,7 +242,8 @@ export default function Cart() {
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg">
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
                   Proceed to Checkout
                 </button>
                 <p className="text-xs text-gray-500 mt-3 text-center">
@@ -259,7 +263,8 @@ export default function Cart() {
               </p>
               <Link
                 href="/"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md">
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md"
+              >
                 Continue Shopping
               </Link>
             </div>

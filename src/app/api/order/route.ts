@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Order from "@/models/order";
 import Cart from "@/models/cart";
-import Product from "@/models/product";
 import redis from "@/lib/redis";
 
 export async function POST(req: Request) {
@@ -48,12 +47,12 @@ export async function POST(req: Request) {
 
     await newOrder.save();
     await Cart.deleteMany({ userId });
-    
+
     // Clear cart cache if using Redis
     if (redis) {
       await redis.del(`cart:${userId}`);
     }
-    
+
     return NextResponse.json(
       { message: "Order placed successfully", orderId: newOrder._id },
       { status: 200 },
