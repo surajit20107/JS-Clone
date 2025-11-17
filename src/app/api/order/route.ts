@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     const products = userCart.map((item) => {
       const redisQty = redisCart[item.productId._id.toString()];
       const quantity = redisQty ? parseInt(redisQty) : item.quantity;
-      
+
       return {
         product: item.productId._id,
         quantity,
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const totalPrice = userCart.reduce((sum, item) => {
       const redisQty = redisCart[item.productId._id.toString()];
       const quantity = redisQty ? parseInt(redisQty) : item.quantity;
-      return sum + (item.productId.price * quantity);
+      return sum + item.productId.price * quantity;
     }, 0);
 
     // Create new order with all required fields

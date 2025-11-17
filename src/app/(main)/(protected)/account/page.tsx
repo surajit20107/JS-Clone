@@ -79,7 +79,7 @@ export default function Account() {
       },
     });
   };
-console.log(session)
+  console.log(session);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin button */}
@@ -87,7 +87,8 @@ console.log(session)
         <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 flex justify-end">
           <Link
             href="/admin"
-            className="inline-block mt-4 mx-2 rounded-md bg-purple-600 px-4 py-2 text-white font-medium hover:bg-blue-700 transition-colors duration-200">
+            className="inline-block mt-4 mx-2 rounded-md bg-purple-600 px-4 py-2 text-white font-medium hover:bg-blue-700 transition-colors duration-200"
+          >
             🚀 Admin Panel
           </Link>
         </div>
@@ -123,9 +124,15 @@ console.log(session)
       </section>
 
       {/* Account Details Section */}
-      <section className="py-16 bg-white">
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-6 max-w-4xl">
-          <div className="flex justify-between items-center mb-6">
+          <Link
+            href="/orders"
+            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+          >
+            View All Orders
+          </Link>
+          <div className="py-8 flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">Account Details</h2>
             <button
               onClick={handleEditToggle}
@@ -238,6 +245,7 @@ console.log(session)
                 Save Changes
               </button>
             )}
+
             <button
               onClick={handleLogout}
               className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors flex items-center"
