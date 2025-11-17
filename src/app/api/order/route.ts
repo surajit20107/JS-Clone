@@ -9,20 +9,29 @@ export async function POST(req: Request) {
 
   try {
     await connectToDatabase();
-    const userCart = await Cart.find({ userId });
+    const userCart = await Cart.find({ userId }).populate("productId");
 
     if (!userCart || userCart.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Calculate total price from all cart items
-    const totalPrice = userCart.reduce((sum, item) => sum + item.totalPrice, 0);
+    // Fetch quantities from Redis
+    const redisCart = await redis.hgetall(`cart:${userId}`);
 
-    // Map cart items to order products format
-    const products = userCart.map((item) => ({
-      product: item.productId,
-      quantity: item.quantity,
-    }));
+    // Map cart items with Redis quantities and calculate total
+    const products = userCart.map((item) => {
+      const redisQty = redisCart[item.productId._id.toString()];
+      const quantity = redisQty ? parseInt(redisQty) : item.quantity;
+      
+      return {
+        product: item.productId._id,
+        quantity,
+        price: item.productId.price * quantity,
+      };
+    });
+
+    // Calculate total price using Redis quantities
+    const totalPrice = products.reduce((sum, item) => sum + item.price, 0);
 
     // Create new order with all required fields
     const newOrder = new Order({
