@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import useSwr from "swr";
+import { useSession } from "@/components/SessionProvider";
 import {
   FaSearch,
   FaChevronDown,
@@ -11,79 +11,44 @@ import {
 } from "react-icons/fa";
 
 export default function Orders() {
+  const session = useSession();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   type Order = {
-    id: string;
-    date: string;
-    total: string;
-    status: string;
-    items: {
-      name: string;
-      price: string;
-      image: string;
+    _id: string;
+    userId: string;
+    products: {
+      product: {
+        _id: string;
+        name: string;
+        price: number;
+        image: string;
+      };
       quantity: number;
     }[];
+    totalPrice: number;
+    status: string;
+    paymentMethod: string;
+    paymentStatus: string;
+    deliveryAddress: string;
+    deliveryCity: string;
+    deliveryState: string;
+    createdAt: string;
   };
 
-  // Sample orders data (replace with DB fetch)
-  const orders: Order[] = [
-    {
-      id: "ORD-12345",
-      date: "Oct 10, 2023",
-      total: "$79.99",
-      status: "Delivered",
-      items: [
-        {
-          name: "SonicWave Headphones",
-          price: "$79.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      id: "ORD-12346",
-      date: "Sep 15, 2023",
-      total: "$129.98",
-      status: "Shipped",
-      items: [
-        {
-          name: "Wireless Mouse",
-          price: "$29.99",
-          image: "/product.jpeg",
-          quantity: 2,
-        },
-        {
-          name: "Keyboard",
-          price: "$69.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      id: "ORD-12347",
-      date: "Aug 20, 2023",
-      total: "$49.99",
-      status: "Processing",
-      items: [
-        {
-          name: "USB Cable",
-          price: "$49.99",
-          image: "/product.jpeg",
-          quantity: 1,
-        },
-      ],
-    },
-  ];
-
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.status.toLowerCase().includes(searchTerm.toLowerCase()),
+  const { data: orders, error } = useSwr(
+    session?.user?.id ? `/api/order?userId=${session.user.id}` : null,
+    (url) => fetch(url).then((res) => res.json()),
   );
+
+  const filteredOrders = orders?.filter
+    ? orders.filter(
+        (order: Order) =>
+          order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.status.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : [];
 
   const toggleExpand = (orderId: string) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
@@ -119,19 +84,29 @@ export default function Orders() {
 
           {/* Orders List */}
           <div className="space-y-4">
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+            {error ? (
+              <p className="text-center text-red-600">
+                Failed to load orders. Please try again later.
+              </p>
+            ) : !orders ? (
+              <p className="text-center text-gray-600">Loading orders...</p>
+            ) : filteredOrders.length > 0 ? (
+              filteredOrders.map((order: Order) => (
                 <div
-                  key={order.id}
+                  key={order._id}
                   className="bg-gray-100 p-4 rounded-lg shadow-md"
                 >
                   <div className="flex justify-between items-center mb-2">
                     <div>
                       <h3 className="font-semibold text-lg">
-                        Order #{order.id}
+                        Order #{order._id.slice(-8).toUpperCase()}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        Date: {order.date} | Total: {order.total}
+                        Date: {new Date(order.createdAt).toLocaleDateString()} |
+                        Total: ₹{order.totalPrice.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Payment: {order.paymentMethod} ({order.paymentStatus})
                       </p>
                     </div>
                     <div className="text-right">
@@ -141,16 +116,20 @@ export default function Orders() {
                             ? "bg-green-200 text-green-800"
                             : order.status === "Shipped"
                               ? "bg-yellow-200 text-yellow-800"
-                              : "bg-blue-200 text-blue-800"
+                              : order.status === "Processing"
+                                ? "bg-blue-200 text-blue-800"
+                                : order.status === "Cancelled"
+                                  ? "bg-red-200 text-red-800"
+                                  : "bg-gray-200 text-gray-800"
                         }`}
                       >
                         {order.status}
                       </span>
                       <button
-                        onClick={() => toggleExpand(order.id)}
+                        onClick={() => toggleExpand(order._id)}
                         className="ml-2 text-blue-600 hover:text-blue-800"
                       >
-                        {expandedOrder === order.id ? (
+                        {expandedOrder === order._id ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
@@ -158,35 +137,40 @@ export default function Orders() {
                       </button>
                     </div>
                   </div>
-                  {expandedOrder === order.id && (
+                  {expandedOrder === order._id && (
                     <div className="mt-4 border-t pt-4">
                       <h4 className="font-semibold mb-2">Items:</h4>
                       <div className="space-y-2">
-                        {order.items.map((item, index) => (
+                        {order.products.map((item, index) => (
                           <div
                             key={index}
                             className="flex items-center bg-white p-2 rounded"
                           >
                             <Image
-                              src={item.image}
-                              alt={item.name}
+                              src={item.product.image || "/product.jpeg"}
+                              alt={item.product.name}
                               width={50}
                               height={50}
                               className="rounded mr-3"
                             />
                             <div className="flex-1">
-                              <p className="font-medium">{item.name}</p>
+                              <p className="font-medium">{item.product.name}</p>
                               <p className="text-sm text-gray-600">
-                                Qty: {item.quantity} | {item.price}
+                                Qty: {item.quantity} | ₹
+                                {item.product.price.toFixed(2)}
                               </p>
                             </div>
                           </div>
                         ))}
                       </div>
-                      <div className="mt-4 flex space-x-2">
-                        <Link href="/about" className="bg-green-600 text-white py-1 px-3 rounded hover:bg-green-700 transition-colors">
-                          View Product
-                        </Link>
+                      <div className="mt-4 border-t pt-4">
+                        <h4 className="font-semibold mb-2">
+                          Delivery Address:
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {order.deliveryAddress}, {order.deliveryCity},{" "}
+                          {order.deliveryState}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -194,7 +178,9 @@ export default function Orders() {
               ))
             ) : (
               <p className="text-center text-gray-600">
-                No orders found matching your search.
+                {searchTerm
+                  ? "No orders found matching your search."
+                  : "You haven't placed any orders yet."}
               </p>
             )}
           </div>
