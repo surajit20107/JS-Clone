@@ -32,19 +32,21 @@ export default function Home() {
     revalidateOnFocus: false,
     dedupingInterval: 60 * 60 * 60,
   });
-  console.log(items);
+  
   if (isLoading) {
     return <SkeletonLoader count={10} />;
   }
-  if (error) return <ServerError />;
+  if (error) return <ServerError />
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       {/* product cards */}
-      <div className="grid grid-co-1 md:grid-cols-3 gap-6 p-6">
-        {items.products.map((item: Product) => (
-          <ProductCard key={item._id} item={item} />
-        ))}
+      <div className="flex-1">
+        <div className="grid grid-co-1 md:grid-cols-3 gap-6 p-6">
+          {items.products.map((item: Product) => (
+            <ProductCard key={item._id} item={item} />
+          ))}
+        </div>
       </div>
 
       {/* pagination */}
@@ -56,8 +58,7 @@ export default function Home() {
               disabled={page === 1}>
               <IoIosArrowDropleftCircle size={30} />
             </button>
-            <span
-              className="font-semibold md:font-bold md:text-xl">
+            <span className="font-semibold md:font-bold md:text-xl">
               {page}
             </span>
             <button
