@@ -8,14 +8,7 @@ import { CldUploadButton } from "next-cloudinary";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 
-type Tab = "users" | "orders" | "products";
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-};
+type Tab = "orders" | "products";
 
 type Product = {
   _id: string;
@@ -45,7 +38,6 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("products");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [productForm, setProductForm] = useState<ProductForm>({
     name: "",
     price: "",
@@ -56,9 +48,6 @@ export default function AdminDashboard() {
     rating: "",
     imagePublicId: "",
   });
-  const [userRole, setUserRole] = useState("");
-
-  const [users, setUsers] = useState<User[]>([]);
 
   const [orders, setOrders] = useState([
     {
@@ -100,23 +89,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchUsers = async () => {
-    try {
-      alert("user endpoint not connected");
-      return;
-      // const response = await axios.get("/api/user");
-      // setUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      alert("Failed to fetch users");
-    }
-  };
-
   useEffect(() => {
-    if (activeTab === "users" && users.length === 0) {
-      fetchUsers();
-    }
-
     if (activeTab === "orders" && orders.length === 0) {
       fetchOrders();
     }
@@ -155,16 +128,9 @@ export default function AdminDashboard() {
     }
   };
 
-  const openUserModal = (user: User) => {
-    setEditingUser(user);
-    setUserRole(user.role);
-    setShowModal(true);
-  };
-
   const closeModal = () => {
     setShowModal(false);
     setEditingProduct(null);
-    setEditingUser(null);
   };
 
   const handleFormChange = (
@@ -196,15 +162,6 @@ export default function AdminDashboard() {
       console.error("Error creating product:", error);
       alert("Filed to create product");
     }
-  };
-
-  const handleSaveUserRole = () => {
-    setUsers(
-      users.map((u) =>
-        u.id === editingUser?.id ? { ...u, role: userRole } : u,
-      ),
-    );
-    closeModal();
   };
 
   const handleOrderStatusChange = (orderId: string, newStatus: string) => {
@@ -273,36 +230,6 @@ export default function AdminDashboard() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "users":
-        return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold mb-4">Manage Users</h2>
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
-              >
-                <div>
-                  <h3 className="font-semibold">{user.name}</h3>
-                  <p className="text-gray-600">
-                    {user.email} | Role: {user.role}
-                  </p>
-                </div>
-                <div className="space-x-2 space-y-2">
-                  <button
-                    onClick={() => openUserModal(user)}
-                    className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 flex items-center"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">
-                    <FaTrash />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        );
       case "orders":
         return (
           <div className="space-y-4">
@@ -425,7 +352,7 @@ export default function AdminDashboard() {
             Admin Dashboard
           </h1>
           <p className="text-lg md:text-xl mb-8">
-            Manage users, orders, and products efficiently.
+            Manage orders and products efficiently.
           </p>
         </div>
       </section>
@@ -433,13 +360,12 @@ export default function AdminDashboard() {
       {/* Tabs and Content */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="flex space-x-4 mb-8 border-b">
-            {["users", "orders", "products"].map((tab) => (
+          <div className="flex space-x-4 mb-8 border-b justify-evenly">
+            {["orders", "products"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab as Tab)}
-                className={`py-2 px-4 font-semibold capitalize ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
-              >
+                className={`py-2 px-4 font-semibold capitalize ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-blue-600"}`}>
                 {tab}
               </button>
             ))}
@@ -448,17 +374,13 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* Modal for Product or User Form */}
+      {/* Modal for Product Form */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold">
-                {editingProduct
-                  ? "Edit Product"
-                  : editingUser
-                    ? "Edit User Role"
-                    : "Add Product"}
+                {editingProduct ? "Edit Product" : "Add Product"}
               </h3>
               <button
                 onClick={closeModal}
@@ -467,124 +389,98 @@ export default function AdminDashboard() {
                 <FaTimes />
               </button>
             </div>
-            {editingUser ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSaveUserRole();
+            <form>
+              <input
+                type="text"
+                name="name"
+                placeholder="Product Name"
+                value={productForm.name}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={productForm.price}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={productForm.description}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="category"
+                placeholder="Category"
+                value={productForm.category}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="stock"
+                placeholder="Stock"
+                value={productForm.stock}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="rating"
+                placeholder="Rating"
+                value={productForm.rating}
+                onChange={handleFormChange}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                required
+                min={1}
+                max={5}
+                step={1}
+              />
+              <CldUploadButton
+                uploadPreset="ml_default"
+                className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold mb-4"
+                onSuccess={(result: any) => {
+                  const imageUrl = result.info.secure_url;
+                  const publicId = result.info.public_id;
+                  setProductForm((prev) => ({
+                    ...prev,
+                    image: imageUrl,
+                    imagePublicId: publicId,
+                  }));
                 }}
-              >
-                <label className="block mb-2">Role</label>
-                <select
-                  value={userRole}
-                  onChange={(e) => setUserRole(e.target.value)}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                >
-                  <option value="Customer">Customer</option>
-                  <option value="Admin">Admin</option>
-                  <option value="Moderator">Moderator</option>
-                </select>
+              />
+
+              {editingProduct ? (
                 <button
                   type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleUpdateProduct(editingProduct);
+                  }}
                   className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
                 >
-                  Update Role
+                  Edit Product
                 </button>
-              </form>
-            ) : (
-              <form>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Product Name"
-                  value={productForm.name}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                />
-                <input
-                  type="number"
-                  name="price"
-                  placeholder="Price"
-                  value={productForm.price}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                />
-                <textarea
-                  name="description"
-                  placeholder="Description"
-                  value={productForm.description}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                />
-                <input
-                  type="text"
-                  name="category"
-                  placeholder="Category"
-                  value={productForm.category}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                />
-                <input
-                  type="number"
-                  name="stock"
-                  placeholder="Stock"
-                  value={productForm.stock}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                />
-                <input
-                  type="number"
-                  name="rating"
-                  placeholder="Rating"
-                  value={productForm.rating}
-                  onChange={handleFormChange}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  required
-                  min={1}
-                  max={5}
-                  step={1}
-                />
-                <CldUploadButton
-                  uploadPreset="ml_default"
-                  className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold mb-4"
-                  onSuccess={(result: any) => {
-                    const imageUrl = result.info.secure_url;
-                    const publicId = result.info.public_id;
-                    setProductForm((prev) => ({
-                      ...prev,
-                      image: imageUrl,
-                      imagePublicId: publicId,
-                    }));
-                  }}
-                />
-
-                {editingProduct ? (
-                  <button
-                    type="submit"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleUpdateProduct(editingProduct);
-                    }}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                  >
-                    Edit Product
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    onClick={handleSaveProduct}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                  >
-                    Add Product
-                  </button>
-                )}
-              </form>
-            )}
+              ) : (
+                <button
+                  type="submit"
+                  onClick={handleSaveProduct}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                >
+                  Add Product
+                </button>
+              )}
+            </form>
           </div>
         </div>
       )}
