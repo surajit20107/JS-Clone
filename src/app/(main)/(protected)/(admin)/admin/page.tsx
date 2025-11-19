@@ -10,6 +10,14 @@ import { IoIosArrowDroprightCircle } from "react-icons/io";
 
 type Tab = "orders" | "products";
 
+type Order = {
+  _id: string;
+  user: string;
+  date: string;
+  total: number;
+  status: string;
+}
+
 type Product = {
   _id: string;
   name: string;
@@ -35,7 +43,7 @@ type ProductForm = {
 export default function AdminDashboard() {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHashMore] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<Tab>("products");
+  const [activeTab, setActiveTab] = useState<Tab>("orders");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [productForm, setProductForm] = useState<ProductForm>({
@@ -49,29 +57,15 @@ export default function AdminDashboard() {
     imagePublicId: "",
   });
 
-  const [orders, setOrders] = useState([
-    {
-      id: "ORD-12345",
-      user: "John Doe",
-      total: "$79.99",
-      status: "Delivered",
-      date: "Oct 10, 2023",
-    },
-    {
-      id: "ORD-12346",
-      user: "Jane Smith",
-      total: "$129.98",
-      status: "Shipped",
-      date: "Sep 15, 2023",
-    },
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const [products, setProducts] = useState<Product[]>([]);
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/api/order");
+      const response = await axios.get("/api/admin/orders");
       setOrders(response.data);
+      console.log("orders:",orders)
     } catch (error) {
       console.error("Error fetching orders:", error);
       alert("Failed to fetch orders");
@@ -166,7 +160,7 @@ export default function AdminDashboard() {
 
   const handleOrderStatusChange = (orderId: string, newStatus: string) => {
     setOrders(
-      orders.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)),
+      orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)),
     );
   };
 
@@ -234,13 +228,13 @@ export default function AdminDashboard() {
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold mb-4">Manage Orders</h2>
-            {orders.map((order) => (
+            {orders.length && orders.map((order) => (
               <div
-                key={order.id}
+                key={order._id}
                 className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
               >
                 <div>
-                  <h3 className="font-semibold">Order #{order.id}</h3>
+                  <h3 className="font-semibold">Order #{order._id}</h3>
                   <p className="text-gray-600">
                     {order.user} | {order.date} | {order.total}
                   </p>
@@ -249,7 +243,7 @@ export default function AdminDashboard() {
                   <select
                     value={order.status}
                     onChange={(e) =>
-                      handleOrderStatusChange(order.id, e.target.value)
+                      handleOrderStatusChange(order._id, e.target.value)
                     }
                     className="px-2 py-1 border border-gray-300 rounded"
                   >
