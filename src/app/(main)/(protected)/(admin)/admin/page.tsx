@@ -12,10 +12,26 @@ type Tab = "orders" | "products";
 
 type Order = {
   _id: string;
-  user: string;
-  date: string;
-  total: number;
+  userId: string;
+  products: {
+    product: {
+      _id: string;
+      name: string;
+      price: number;
+      image: string;
+    };
+    quantity: number;
+  }[];
+  totalPrice: number;
   status: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  deliveryAddress: string;
+  deliveryCity: string;
+  deliveryState: string;
+  deliveryEmail: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 type Product = {
@@ -63,9 +79,10 @@ export default function AdminDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/api/admin/orders");
-      setOrders(response.data);
-      console.log("orders:",orders)
+      const response = await axios.get("/api/admin/orders?page=1");
+      const latestOrders = response.data.orders.slice(0, 5);
+      setOrders(latestOrders);
+      console.log("orders:", latestOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
       alert("Failed to fetch orders");
@@ -158,10 +175,21 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleOrderStatusChange = (orderId: string, newStatus: string) => {
-    setOrders(
-      orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)),
-    );
+  const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      // Update locally first for immediate feedback
+      setOrders(
+        orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)),
+      );
+
+      // Update on server
+      await axios.put(`/api/admin/orders?id=${orderId}`, { status: newStatus });
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      alert("Failed to update order status");
+      // Revert on error
+      fetchOrders();
+    }
   };
 
   const handleEditProduct = async (product: Product) => {
@@ -228,15 +256,18 @@ export default function AdminDashboard() {
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold mb-4">Manage Orders</h2>
-            {orders.length && orders.map((order) => (
+            {orders.length > 0 ? orders.map((order) => (
               <div
                 key={order._id}
                 className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
               >
                 <div>
-                  <h3 className="font-semibold">Order #{order._id}</h3>
+                  <h3 className="font-semibold">Order #{order._id.slice(-8).toUpperCase()}</h3>
                   <p className="text-gray-600">
-                    {order.user} | {order.date} | {order.total}
+                    {order.deliveryEmail} | {new Date(order.createdAt).toLocaleDateString()} | ₹{order.totalPrice.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Payment: {order.paymentMethod} ({order.paymentStatus})
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -245,8 +276,19 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       handleOrderStatusChange(order._id, e.target.value)
                     }
-                    className="px-2 py-1 border border-gray-300 rounded"
+                    className={`px-3 py-1 border border-gray-300 rounded text-sm font-medium ${
+                      order.status === "Delivered"
+                        ? "bg-green-50 text-green-700"
+                        : order.status === "Shipped"
+                          ? "bg-blue-50 text-blue-700"
+                          : order.status === "Processing"
+                            ? "bg-yellow-50 text-yellow-700"
+                            : order.status === "Cancelled"
+                              ? "bg-red-50 text-red-700"
+                              : "bg-gray-50 text-gray-700"
+                    }`}
                   >
+                    <option value="Pending">Pending</option>
                     <option value="Processing">Processing</option>
                     <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>
@@ -257,7 +299,9 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </div>
-            ))}
+            )) : (
+              <p className="text-gray-600">No orders found.</p>
+            )}
           </div>
         );
       case "products":
