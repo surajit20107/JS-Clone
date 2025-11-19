@@ -67,8 +67,8 @@ export default function OrdersPage() {
         orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
       );
       
-      // TODO: Add API endpoint to update order status
-      // await axios.put(`/api/admin/orders/${orderId}`, { status: newStatus });
+      // Update on server
+      await axios.put(`/api/admin/orders?id=${orderId}`, { status: newStatus });
     } catch (error) {
       console.error("Error updating order status:", error);
       alert("Failed to update order status");
