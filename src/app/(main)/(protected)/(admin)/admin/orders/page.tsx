@@ -1,10 +1,12 @@
-
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { FaEye, FaTimes } from "react-icons/fa";
-import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/io";
+import {
+  IoIosArrowDropleftCircle,
+  IoIosArrowDroprightCircle,
+} from "react-icons/io";
 
 type Order = {
   _id: string;
@@ -60,13 +62,18 @@ export default function OrdersPage() {
     fetchOrders();
   }, [page]);
 
-  const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
+  const handleOrderStatusChange = async (
+    orderId: string,
+    newStatus: string,
+  ) => {
     try {
       // Update locally first for immediate feedback
       setOrders(
-        orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
+        orders.map((o) =>
+          o._id === orderId ? { ...o, status: newStatus } : o,
+        ),
       );
-      
+
       // Update on server
       await axios.put(`/api/admin/orders?id=${orderId}`, { status: newStatus });
     } catch (error) {
@@ -100,15 +107,21 @@ export default function OrdersPage() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Orders Management</h1>
-          <p className="text-lg md:text-xl mb-8">View and manage all orders from the database.</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Orders Management
+          </h1>
+          <p className="text-lg md:text-xl mb-8">
+            View and manage all orders from the database.
+          </p>
         </div>
       </section>
 
       {/* Orders Content */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-2xl font-semibold mb-4">All Orders ({orders.length})</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            All Orders ({orders.length})
+          </h2>
           {orders.length === 0 ? (
             <p className="text-gray-600">No orders found.</p>
           ) : (
@@ -129,13 +142,16 @@ export default function OrdersPage() {
                         {new Date(order.createdAt).toLocaleTimeString()}
                       </p>
                       <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Customer:</span> {order.deliveryEmail}
+                        <span className="font-medium">Customer:</span>{" "}
+                        {order.deliveryEmail}
                       </p>
                       <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Total:</span> ₹{order.totalPrice.toFixed(2)}
+                        <span className="font-medium">Total:</span> ₹
+                        {order.totalPrice.toFixed(2)}
                       </p>
                       <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Payment:</span> {order.paymentMethod} -{" "}
+                        <span className="font-medium">Payment:</span>{" "}
+                        {order.paymentMethod} -{" "}
                         <span
                           className={
                             order.paymentStatus === "Paid"
@@ -147,14 +163,17 @@ export default function OrdersPage() {
                         </span>
                       </p>
                       <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Items:</span> {order.products.length} product(s)
+                        <span className="font-medium">Items:</span>{" "}
+                        {order.products.length} product(s)
                       </p>
                     </div>
 
                     <div className="flex flex-col items-end gap-2 flex-shrink-0">
                       <select
                         value={order.status}
-                        onChange={(e) => handleOrderStatusChange(order._id, e.target.value)}
+                        onChange={(e) =>
+                          handleOrderStatusChange(order._id, e.target.value)
+                        }
                         className={`px-3 py-1 border border-gray-300 rounded text-sm font-medium ${
                           order.status === "Delivered"
                             ? "bg-green-50 text-green-700"
@@ -196,7 +215,9 @@ export default function OrdersPage() {
               >
                 <IoIosArrowDropleftCircle size={30} />
               </button>
-              <span className="font-semibold md:font-bold md:text-xl">Page {page}</span>
+              <span className="font-semibold md:font-bold md:text-xl">
+                Page {page}
+              </span>
               <button
                 onClick={() => setPage((prev) => prev + 1)}
                 disabled={!hasMore}
@@ -229,10 +250,13 @@ export default function OrdersPage() {
               {/* Order Information */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold text-lg mb-3">Order Information</h4>
+                  <h4 className="font-semibold text-lg mb-3">
+                    Order Information
+                  </h4>
                   <div className="space-y-2 text-sm">
                     <p>
-                      <span className="font-medium">Order ID:</span> {selectedOrder._id}
+                      <span className="font-medium">Order ID:</span>{" "}
+                      {selectedOrder._id}
                     </p>
                     <p>
                       <span className="font-medium">Created:</span>{" "}
@@ -244,23 +268,31 @@ export default function OrdersPage() {
                     </p>
                     <p>
                       <span className="font-medium">Status:</span>{" "}
-                      <span className="font-semibold">{selectedOrder.status}</span>
+                      <span className="font-semibold">
+                        {selectedOrder.status}
+                      </span>
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold text-lg mb-3">Payment Information</h4>
+                  <h4 className="font-semibold text-lg mb-3">
+                    Payment Information
+                  </h4>
                   <div className="space-y-2 text-sm">
                     <p>
-                      <span className="font-medium">Method:</span> {selectedOrder.paymentMethod}
+                      <span className="font-medium">Method:</span>{" "}
+                      {selectedOrder.paymentMethod}
                     </p>
                     <p>
                       <span className="font-medium">Status:</span>{" "}
-                      <span className="font-semibold">{selectedOrder.paymentStatus}</span>
+                      <span className="font-semibold">
+                        {selectedOrder.paymentStatus}
+                      </span>
                     </p>
                     <p>
-                      <span className="font-medium">Payment ID:</span> {selectedOrder.paymentId}
+                      <span className="font-medium">Payment ID:</span>{" "}
+                      {selectedOrder.paymentId}
                     </p>
                     <p>
                       <span className="font-medium">Total Amount:</span> ₹
@@ -272,31 +304,40 @@ export default function OrdersPage() {
 
               {/* Delivery Information */}
               <div>
-                <h4 className="font-semibold text-lg mb-3">Delivery Information</h4>
+                <h4 className="font-semibold text-lg mb-3">
+                  Delivery Information
+                </h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div className="space-y-2">
                     <p>
-                      <span className="font-medium">Address:</span> {selectedOrder.deliveryAddress}
+                      <span className="font-medium">Address:</span>{" "}
+                      {selectedOrder.deliveryAddress}
                     </p>
                     <p>
-                      <span className="font-medium">City:</span> {selectedOrder.deliveryCity}
+                      <span className="font-medium">City:</span>{" "}
+                      {selectedOrder.deliveryCity}
                     </p>
                     <p>
-                      <span className="font-medium">State:</span> {selectedOrder.deliveryState}
+                      <span className="font-medium">State:</span>{" "}
+                      {selectedOrder.deliveryState}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p>
-                      <span className="font-medium">Country:</span> {selectedOrder.deliveryCountry}
+                      <span className="font-medium">Country:</span>{" "}
+                      {selectedOrder.deliveryCountry}
                     </p>
                     <p>
-                      <span className="font-medium">Pincode:</span> {selectedOrder.deliveryPincode}
+                      <span className="font-medium">Pincode:</span>{" "}
+                      {selectedOrder.deliveryPincode}
                     </p>
                     <p>
-                      <span className="font-medium">Phone:</span> {selectedOrder.deliveryPhone}
+                      <span className="font-medium">Phone:</span>{" "}
+                      {selectedOrder.deliveryPhone}
                     </p>
                     <p>
-                      <span className="font-medium">Email:</span> {selectedOrder.deliveryEmail}
+                      <span className="font-medium">Email:</span>{" "}
+                      {selectedOrder.deliveryEmail}
                     </p>
                   </div>
                 </div>
@@ -321,7 +362,8 @@ export default function OrdersPage() {
                       <div className="flex-1">
                         <h5 className="font-semibold">{item.product.name}</h5>
                         <p className="text-sm text-gray-600">
-                          Quantity: {item.quantity} × ₹{item.product.price.toFixed(2)} = ₹
+                          Quantity: {item.quantity} × ₹
+                          {item.product.price.toFixed(2)} = ₹
                           {(item.quantity * item.product.price).toFixed(2)}
                         </p>
                       </div>

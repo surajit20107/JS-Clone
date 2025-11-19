@@ -43,7 +43,13 @@ export async function PUT(req: Request) {
       );
     }
 
-    const validStatuses = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
+    const validStatuses = [
+      "Pending",
+      "Processing",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+    ];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { message: "Invalid status value" },
@@ -56,14 +62,11 @@ export async function PUT(req: Request) {
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { status },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedOrder) {
-      return NextResponse.json(
-        { message: "Order not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
 
     return NextResponse.json(
