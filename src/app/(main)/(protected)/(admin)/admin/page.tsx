@@ -292,7 +292,7 @@ export default function AdminDashboard() {
                   />
                   <div>
                     <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-gray-600">${product.price.toFixed(2)}</p>
+                    <p className="text-gray-600">&#8377;{product.price.toFixed(2)}</p>
                     <p className="text-gray-600 h-12 overflow-hidden">
                       {product.description}
                     </p>
