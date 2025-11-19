@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Order from "@/models/order";
+import Product from "@/models/product";
 
 export async function GET(req: Request) {
   try {
@@ -9,7 +10,11 @@ export async function GET(req: Request) {
     const limit = 10;
     const skip = (page - 1) * limit;
     await connectToDatabase();
-    const orders = await Order.find().skip(skip).limit(limit);
+    const orders = await Order.find().skip(skip).limit(limit).sort({ createdAt: -1 }).populate({
+      path: "products.product",
+      model: Product,
+    })
+    
     const totalOrders = await Order.countDocuments();
     const hasMore = totalOrders > skip + orders.length;
     return NextResponse.json({ orders, hasMore }, { status: 200 });

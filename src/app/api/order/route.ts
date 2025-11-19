@@ -105,7 +105,7 @@ export async function GET(req: Request) {
 
     await connectToDatabase();
 
-    const orders = await Order.find({ userId }).populate("products.product");
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate("products.product");
 
     if (!orders) {
       return NextResponse.json({ error: "No orders found" }, { status: 404 });

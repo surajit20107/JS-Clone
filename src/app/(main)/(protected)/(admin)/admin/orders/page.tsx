@@ -102,7 +102,7 @@ export default function OrdersPage() {
       </div>
     );
   }
-
+console.log("orders:", orders)
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -110,8 +110,7 @@ export default function OrdersPage() {
         <div>
           <Link
             href="/admin"
-            className="text-white hover:underline cursor-pointer"
-          >
+            className="text-white hover:underline cursor-pointer">
             <FaArrowLeft className="inline-block mr-2" />
             Back to Dashboard
           </Link>
@@ -360,8 +359,7 @@ export default function OrdersPage() {
                   {selectedOrder.products.map((item, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-4 bg-gray-50 p-3 rounded"
-                    >
+                      className="flex items-center gap-4 bg-gray-50 p-3 rounded">
                       <Image
                         src={item.product.image}
                         alt={item.product.name}
@@ -374,7 +372,7 @@ export default function OrdersPage() {
                         <p className="text-sm text-gray-600">
                           Quantity: {item.quantity} × &#8377;
                           {item?.product?.price?.toFixed(2)} = &#8377;
-                          {(item.quantity * item.product.price).toFixed(2)}
+                          {(item?.quantity * item?.product?.price).toFixed(2)}
                         </p>
                       </div>
                     </div>
