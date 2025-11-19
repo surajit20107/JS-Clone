@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { FaEye, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaEye, FaTimes } from "react-icons/fa";
+import Link from "next/link";
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
@@ -105,8 +106,17 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
-        <div className="container mx-auto px-6 text-center">
+      <section className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-2 md:p-4">
+        <div>
+          <Link
+            href="/admin"
+            className="text-white hover:underline cursor-pointer"
+          >
+            <FaArrowLeft className="inline-block mr-2" />
+            Back to Dashboard
+          </Link>
+        </div>
+        <div className="container mx-auto py-16 px-6 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Orders Management
           </h1>
@@ -362,8 +372,8 @@ export default function OrdersPage() {
                       <div className="flex-1">
                         <h5 className="font-semibold">{item.product.name}</h5>
                         <p className="text-sm text-gray-600">
-                          Quantity: {item.quantity} × ₹
-                          {item.product.price.toFixed(2)} = ₹
+                          Quantity: {item.quantity} × &#8377;
+                          {item?.product?.price?.toFixed(2)} = &#8377;
                           {(item.quantity * item.product.price).toFixed(2)}
                         </p>
                       </div>

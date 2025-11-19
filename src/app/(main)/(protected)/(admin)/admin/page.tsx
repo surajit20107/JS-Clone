@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaEdit, FaTrash, FaPlus, FaEye, FaTimes } from "react-icons/fa";
+import Link from "next/link";
+import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { productSchema } from "@/lib/schema";
 import { CldUploadButton } from "next-cloudinary";
@@ -32,7 +33,7 @@ type Order = {
   deliveryEmail: string;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 type Product = {
   _id: string;
@@ -175,11 +176,16 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
+  const handleOrderStatusChange = async (
+    orderId: string,
+    newStatus: string,
+  ) => {
     try {
       // Update locally first for immediate feedback
       setOrders(
-        orders.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o)),
+        orders.map((o) =>
+          o._id === orderId ? { ...o, status: newStatus } : o,
+        ),
       );
 
       // Update on server
@@ -256,52 +262,66 @@ export default function AdminDashboard() {
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold mb-4">Manage Orders</h2>
-            {orders.length > 0 ? orders.map((order) => (
-              <div
-                key={order._id}
-                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
-              >
-                <div>
-                  <h3 className="font-semibold">Order #{order._id.slice(-8).toUpperCase()}</h3>
-                  <p className="text-gray-600">
-                    {order.deliveryEmail} | {new Date(order.createdAt).toLocaleDateString()} | ₹{order.totalPrice.toFixed(2)}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Payment: {order.paymentMethod} ({order.paymentStatus})
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      handleOrderStatusChange(order._id, e.target.value)
-                    }
-                    className={`px-3 py-1 border border-gray-300 rounded text-sm font-medium ${
-                      order.status === "Delivered"
-                        ? "bg-green-50 text-green-700"
-                        : order.status === "Shipped"
-                          ? "bg-blue-50 text-blue-700"
-                          : order.status === "Processing"
-                            ? "bg-yellow-50 text-yellow-700"
-                            : order.status === "Cancelled"
-                              ? "bg-red-50 text-red-700"
-                              : "bg-gray-50 text-gray-700"
-                    }`}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                  <button className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <div
+                  key={order._id}
+                  className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
+                >
+                  <div>
+                    <h3 className="font-semibold">
+                      Order #{order._id.slice(-8).toUpperCase()}
+                    </h3>
+                    <p className="text-gray-600">
+                      {order.deliveryEmail} |{" "}
+                      {new Date(order.createdAt).toLocaleDateString()} | ₹
+                      {order.totalPrice.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Payment: {order.paymentMethod} ({order.paymentStatus})
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <select
+                      value={order.status}
+                      onChange={(e) =>
+                        handleOrderStatusChange(order._id, e.target.value)
+                      }
+                      className={`px-3 py-1 border border-gray-300 rounded text-sm font-medium ${
+                        order.status === "Delivered"
+                          ? "bg-green-50 text-green-700"
+                          : order.status === "Shipped"
+                            ? "bg-blue-50 text-blue-700"
+                            : order.status === "Processing"
+                              ? "bg-yellow-50 text-yellow-700"
+                              : order.status === "Cancelled"
+                                ? "bg-red-50 text-red-700"
+                                : "bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                    {/* <button className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700">
                     <FaEye />
-                  </button>
+                  </button> */}
+                  </div>
                 </div>
-              </div>
-            )) : (
+              ))
+            ) : (
               <p className="text-gray-600">No orders found.</p>
             )}
+            <div>
+              <Link
+                href="/admin/orders"
+                className="text-blue-600 hover:underline cursor-pointer"
+              >
+                View All Orders
+              </Link>
+            </div>
           </div>
         );
       case "products":
@@ -319,7 +339,8 @@ export default function AdminDashboard() {
             {products.map((product: Product) => (
               <div
                 key={product._id}
-                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
+                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
+              >
                 <div className="flex items-center">
                   <Image
                     src={product.image}
@@ -330,7 +351,9 @@ export default function AdminDashboard() {
                   />
                   <div>
                     <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-gray-600">&#8377;{product.price.toFixed(2)}</p>
+                    <p className="text-gray-600">
+                      &#8377;{product.price.toFixed(2)}
+                    </p>
                     <p className="text-gray-600 h-12 overflow-hidden">
                       {product.description}
                     </p>
@@ -403,7 +426,8 @@ export default function AdminDashboard() {
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab as Tab)}
-                className={`py-2 px-4 font-semibold capitalize ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-blue-600"}`}>
+                className={`py-2 px-4 font-semibold capitalize ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
+              >
                 {tab}
               </button>
             ))}
