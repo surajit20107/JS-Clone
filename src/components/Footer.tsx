@@ -39,9 +39,9 @@ export default function Footer() {
           </div>
 
           {/* Social Media Section */}
-          <div className="text-center md:text-right">
+          <div className="text-center ">
             <h4 className="text-lg font-semibold mb-4">Social Links</h4>
-            <div className="flex justify-evenly md:justify-end space-x-4 ">
+            <div className="flex justify-evenly md:justify-end space-x-4 w-[100vw] md:w-auto md:space-x-12">
               {socialLinks.map((social) => (
                 <a
                   key={social.href}

@@ -42,8 +42,13 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* product cards */}
       <div className="flex-1">
-        <div className="grid grid-co-1 md:grid-cols-3 gap-6 p-6">
-          {items.products.map((item: Product) => (
+        <div className="grid grid-col-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 justify-center">
+          {items?.products?.length === 0 && (
+            <div className="text-center text-2xl font-bold text-gray-500">
+              No products found
+            </div>
+          )}
+          {items?.products?.map((item: Product) => (
             <ProductCard key={item._id} item={item} />
           ))}
         </div>
