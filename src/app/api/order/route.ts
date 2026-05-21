@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     let redisCart: Record<string, string> = {};
     try {
       if (redis) {
-        redisCart = await redis.hgetall(`cart:${userId}`);
+        redisCart = (await redis.hgetall(`cart:${userId}`)) as Record<string, string>
       }
     } catch (error) {
       console.error("Redis error:", error);

@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const cartKey = `cart:${userId}`;
     // const currentQty = parseInt(await redis.hget(cartKey, productId)) || 0;
     const rawQty = await redis.hget(cartKey, productId);
-    const currentQty = rawQty ? parseInt(rawQty) : 1;
+    const currentQty = rawQty ? rawQty : 1;
 
     // Prevent decrement if quantity is already 1 or less
     if (currentQty == 1) {
