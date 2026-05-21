@@ -74,7 +74,7 @@ export async function GET(req: Request) {
     await connectToDatabase();
 
     const dbCart = await Cart.find({ userId }).populate("productId");
-    const redisCart = await redis.hgetall(`cart:${userId}`);
+    const redisCart = (await redis.hgetall(`cart:${userId}`)) as Record<string, string>
 
     // 🔁 Sync Redis if empty
     if (Object.keys(redisCart).length === 0) {
@@ -89,7 +89,7 @@ export async function GET(req: Request) {
 
     // 🧠 Merge Redis quantity with DB cart
     const userCart = dbCart.map((item) => {
-      const redisQty = redisCart[item.productId._id.toString()];
+      const redisQty = redisCart[item?.productId._id];
       const quantity = redisQty ? parseInt(redisQty) : item.quantity;
 
       return {
