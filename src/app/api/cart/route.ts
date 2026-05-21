@@ -74,12 +74,12 @@ export async function GET(req: Request) {
     await connectToDatabase();
 
     const dbCart = await Cart.find({ userId }).populate("productId");
-    const redisCart = (await redis.hgetall(`cart:${userId}`)) as Record<string, string>
+    const redisCart = (await redis.hGetAll(`cart:${userId}`)) as Record<string, string>
 
     // 🔁 Sync Redis if empty
     if (Object.keys(redisCart).length === 0) {
       for (const item of dbCart) {
-        await redis.hset(
+        await redis.hSet(
           `cart:${userId}`,
           item.productId._id.toString(),
           item.quantity,

@@ -31,6 +31,7 @@ export default function Cart() {
       try {
         if (!session?.user?.id) return;
         setIsLoading(true);
+        console.log("USER_ID:", session?.user?.id);
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
 
         if (res.status === 200) {
