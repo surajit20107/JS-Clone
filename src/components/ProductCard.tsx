@@ -120,7 +120,7 @@ export default function ProductCard({ item }: ProductCardProps) {
         {/* Add to Cart Button */}
         <button
           onClick={handleAddToCart}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex items-center justify-center hover:cursor-pointer"
         >
           <FaShoppingCart className="mr-2" />
           Add to Cart
