@@ -6,10 +6,10 @@ export async function POST(req: Request) {
   try {
     const { email, name } = await req.json();
     
-    // inngest.send({
-    //   name: "app/user.registered",
-    //   data: { email, name },
-    // });
+    inngest.send({
+      name: "app/user.registered",
+      data: { email, name },
+    });
 
     await sendMail(email, name)
 
