@@ -54,7 +54,6 @@ export default function ProductCard({ item }: ProductCardProps) {
     const userId = session?.user?.id;
     if (!userId) {
       router.push("/login");
-      alert("Please login to add product to cart");
       return;
     }
     addProductToUserCart(userId, item._id);

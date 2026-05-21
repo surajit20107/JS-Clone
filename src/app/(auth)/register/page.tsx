@@ -57,6 +57,8 @@ export default function SignUp() {
       );
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
     }
   };
 

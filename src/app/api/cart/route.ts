@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     if (!product) {
       return NextResponse.json(
-        { message: "Product nkt found" },
+        { message: "Product not found" },
         { status: 404 },
       );
     }
@@ -90,7 +90,8 @@ export async function GET(req: Request) {
     // 🧠 Merge Redis quantity with DB cart
     const userCart = dbCart.map((item) => {
       const redisQty = redisCart[item?.productId._id];
-      const quantity = redisQty ? parseInt(redisQty) : item.quantity;
+      // const quantity = redisQty ? parseInt(redisQty) : item.quantity;
+      const quantity = redisQty ? redisQty : item.quantity;
 
       return {
         _id: item._id,

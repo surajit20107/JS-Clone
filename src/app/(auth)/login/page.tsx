@@ -46,6 +46,8 @@ export default function SignIn() {
       );
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
