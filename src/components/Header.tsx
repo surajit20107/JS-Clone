@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { MdOutlineShoppingBag } from "react-icons/md";
+import { ModeToggle } from "./theme-toggle";
 
 export default function Header() {
   const pathname = usePathname();
@@ -32,7 +33,7 @@ export default function Header() {
               href="/cart"
               className="text-white hover:text-gray-300 focus:outline-none"
             >
-              <MdOutlineShoppingBag className="text-2xl md:text-4xl" />
+              <MdOutlineShoppingBag className="text-2xl" />
             </Link>
 
             {/* Desktop Menu */}
@@ -48,6 +49,7 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <ModeToggle />
             </div>
 
             {/* Mobile Menu Button */}
@@ -98,6 +100,7 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <ModeToggle />
             </div>
           </div>
         )}

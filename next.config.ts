@@ -18,4 +18,5 @@ module.exports = {
       },
     ],
   },
+  allowedDevOrigins: ['http://localhost:3000', '*.replit.dev'],
 };
