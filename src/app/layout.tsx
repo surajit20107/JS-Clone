@@ -46,11 +46,10 @@ export const metadata: Metadata = {
     siteName: "Next Basket Shop",
     images: [
       {
-        // Replace with your final home OG image in public/og/home-og.jpg
-        url: "/og/banner.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Next Basket Shop — curated products",
+        alt: "Next Basket Shop — Shop More. Live Better.",
       },
     ],
     locale: "en_US",
@@ -61,7 +60,7 @@ export const metadata: Metadata = {
     title: "Next Basket Shop",
     description:
       "Find curated products, secure checkout and fast shipping at Next Basket Shop.",
-    images: ["/og/banner.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
