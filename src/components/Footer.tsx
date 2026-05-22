@@ -88,7 +88,7 @@ export default function Footer() {
         {/* Copyright Section */}
         <div className="mt-8 border-t border-gray-700 pt-4 text-center">
           <p className="text-gray-400 text-sm">
-            © {currentYear} JS Clone. All rights reserved.
+            © {currentYear} Next Basket. All rights reserved.
           </p>
         </div>
       </div>

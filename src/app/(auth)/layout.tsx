@@ -5,9 +5,9 @@ import AuthNav from "@/components/AuthNavbar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login or Create an Account | JS Clone E-Commerce",
+  title: "Login or Create an Account | Next Basket E-Commerce",
   description:
-    "Securely log in or create a free JS account to enjoy personalized shopping, exclusive discounts, and fast checkout. Your trusted destination for quality products online.",
+    "Securely log in or create a free Next Basket account to enjoy personalized shopping, exclusive discounts, and fast checkout. Your trusted destination for quality products online.",
   keywords: [
     "login",
     "sign up",
@@ -26,17 +26,17 @@ export const metadata: Metadata = {
     "special deals",
   ],
   openGraph: {
-    title: "Login or Create an Account | JS Clone",
+    title: "Login or Create an Account | Next Basket",
     description:
-      "Access your js-clone account or sign up to start shopping smarter — fast checkout, exclusive offers, and secure purchases.",
-    url: "https://js-clone-two.vercel.app/login",
-    siteName: "JS Clone",
+      "Access your Next Basket account or sign up to start shopping smarter — fast checkout, exclusive offers, and secure purchases.",
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+    siteName: "Next Basket",
     images: [
       {
-        url: "https://js-clone-two.vercel.app",
+        url: process.env.NEXT_PUBLIC_BASE_URL as string,
         width: 1200,
         height: 630,
-        alt: "JS Clone",
+        alt: "Next Basket",
       },
     ],
     locale: "en_US",
@@ -44,17 +44,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Login or Create an Account | JS Clone",
+    title: "Login or Create an Account | Next Basket",
     description:
       "Log in or sign up to enjoy exclusive deals and faster checkout on ShopEase.",
-    images: ["https://js-clone-two.vercel.app/og/banner.jpg"],
+    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/og/banner.jpg`],
   },
   robots: {
     index: false,
     follow: true,
   },
   alternates: {
-    canonical: "https://js-clone-two.vercel.app/login",
+    canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
   },
 };
 

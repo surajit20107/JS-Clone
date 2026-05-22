@@ -24,7 +24,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
-              JS Clone
+              Next Basket
             </Link>
           </div>
 

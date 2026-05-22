@@ -1,5 +1,5 @@
 import { Inngest } from "inngest";
-const inngest = new Inngest({ id: "js-clone" });
+const inngest = new Inngest({ id: "nextbasket" });
 import { sendMail } from "@/lib/sendMail";
 
 export const welcomeUser = inngest.createFunction(

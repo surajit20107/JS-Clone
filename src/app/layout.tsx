@@ -15,17 +15,19 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://js-clone-two.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
   title: {
-    default: "JS Clone Shop",
-    template: "%s | JS Clone Shop for online shopping", // use "Home" -> "Home | JS Clone Shop"
+    default: "Next Basket Shop",
+    template: "%s | Next Basket Shop for online shopping",
   },
   description:
-    "JS Clone Shop — curated products, great prices and fast shipping. Discover trending items, secure checkout and member deals.",
+    "Next Basket Shop — curated products, great prices and fast shipping. Discover trending items, secure checkout and member deals.",
   keywords: [
     "shop online",
-    "JS online shop",
-    "ecommerce login",
+    "online shopping",
+    "ecommerce store",
+    "Next Basket shop",
+    "ecommerce",
     "shopping account",
     "secure checkout",
     "discounts",
@@ -37,18 +39,18 @@ export const metadata: Metadata = {
     "special deals",
   ],
   openGraph: {
-    title: "JS Clone Shop",
+    title: "Next Basket Shop",
     description:
-      "Shop trending products with fast delivery and secure checkout at JS Clone Shop.",
-    url: "https://js-clone-two.vercel.app",
-    siteName: "JS Clone Shop",
+      "Shop trending products with fast delivery and secure checkout at Next Basket Shop.",
+    url: process.env.NEXT_PUBLIC_BASE_URL,
+    siteName: "Next Basket Shop",
     images: [
       {
         // Replace with your final home OG image in public/og/home-og.jpg
         url: "/og/banner.jpg",
         width: 1200,
         height: 630,
-        alt: "JS Clone Shop — curated products",
+        alt: "Next Basket Shop — curated products",
       },
     ],
     locale: "en_US",
@@ -56,9 +58,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JS Clone Shop",
+    title: "Next Basket Shop",
     description:
-      "Find curated products, secure checkout and fast shipping at JS Clone Shop.",
+      "Find curated products, secure checkout and fast shipping at Next Basket Shop.",
     images: ["/og/banner.jpg"],
   },
   robots: {
@@ -66,16 +68,16 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://js-clone-two.vercel.app/",
+    canonical: process.env.NEXT_PUBLIC_BASE_URL,
   },
 };
 
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "JS Clone Shop",
-  url: "https://js-clone-two.vercel.app",
-  logo: "https://js-clone-two.vercel.app/logo.png", // replace with your logo path
+  name: "Next Basket Shop",
+  url: process.env.NEXT_PUBLIC_BASE_URL,
+  logo: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
   sameAs: [
     // add your social links if available
     "https://twitter.com/yourhandle",
@@ -86,11 +88,11 @@ const orgJsonLd = {
 const siteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "JS Clone Shop",
-  url: "https://js-clone-two.vercel.app",
+  name: "Next Basket Shop",
+  url: process.env.NEXT_PUBLIC_BASE_URL,
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://js-clone-two.vercel.app/search?q={search_term_string}",
+    target: `${process.env.NEXT_PUBLIC_BASE_URL}/search?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
