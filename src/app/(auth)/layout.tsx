@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Login or Create an Account | Next Basket",
     description:
       "Log in or sign up to enjoy exclusive deals and faster checkout on ShopEase.",
-    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/og/banner.jpg`],
+    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/og/banner.png`],
   },
   robots: {
     index: false,

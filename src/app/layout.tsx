@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     images: [
       {
         // Replace with your final home OG image in public/og/home-og.jpg
-        url: "/og/banner.jpg",
+        url: "/og/banner.png",
         width: 1200,
         height: 630,
         alt: "Next Basket Shop — curated products",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "Next Basket Shop",
     description:
       "Find curated products, secure checkout and fast shipping at Next Basket Shop.",
-    images: ["/og/banner.jpg"],
+    images: ["/og/banner.png"],
   },
   robots: {
     index: true,
