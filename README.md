@@ -1,159 +1,123 @@
-# Next Basket Shop
+# 🛒 Next Basket Shop
 
-A full-featured, production-ready e-commerce platform built with a modern web stack. Next Basket delivers a seamless shopping experience — from browsing curated products to secure checkout — with speed, scalability, and developer ergonomics at its core.
+> Your one-stop destination for quality products, great deals, and a seamless shopping experience.
 
----
-
-## Tech Stack
-
-### Next.js 16 (App Router)
-Next.js is a React framework built for production. It provides file-based routing, server-side rendering, static site generation, API routes, and edge-ready middleware — all in one package. This project uses the **App Router**, which enables nested layouts, React Server Components, and co-located data fetching for fast, efficient page loads.
-
-### TypeScript 5
-TypeScript is a strongly typed superset of JavaScript that catches errors at compile time rather than runtime. It improves developer confidence, enables better IDE support, and makes large codebases easier to maintain. Every component, API handler, and utility in this project is fully typed.
-
-### React 19
-React is the UI rendering library powering this application. Version 19 introduces new hooks and concurrent rendering improvements, allowing for more responsive and performant interfaces out of the box.
-
-### MongoDB + Mongoose
-MongoDB is a document-oriented NoSQL database that stores data in flexible, JSON-like documents. It's ideal for e-commerce data with varying product attributes. **Mongoose** sits on top of MongoDB and provides schema definitions, validation, middleware, and a clean query API for Node.js.
-
-### Redis (ioredis)
-Redis is an in-memory data store used here for caching and session management. It dramatically reduces database load by serving frequently accessed data from memory — keeping page loads fast even under heavy traffic. The `ioredis` client provides a robust, Promise-based interface to Redis.
-
-### Better-Auth
-Better-Auth is a modern, full-stack authentication library. It handles email/password login, social OAuth (Google), session management with cookie caching, and role-based access control — including custom `isAdmin` and `isBanned` user flags — with minimal boilerplate.
-
-### Tailwind CSS 4
-Tailwind is a utility-first CSS framework that lets you build custom designs directly in your markup. With v4's new engine, it's faster to compile and more flexible than ever. All UI styles in this project are written with Tailwind utility classes.
-
-### shadcn/ui + Radix UI
-shadcn/ui is a collection of beautifully designed, accessible components built on top of **Radix UI** primitives. Rather than being a traditional component library, components are copied into the project and fully owned — making them easy to customise without fighting opinionated styles.
-
-### Cloudinary
-Cloudinary is a cloud-based media management platform. It handles image uploads, optimisation, transformation, and delivery via CDN — ensuring product images are always served at the right size and format for any device.
-
-### Inngest
-Inngest is a serverless background job and workflow orchestration platform. It's used here to reliably trigger asynchronous tasks (such as sending welcome emails after signup) without managing queues or workers manually.
-
-### Nodemailer
-Nodemailer is the standard Node.js library for sending emails. It's configured with Gmail SMTP to deliver transactional emails — including welcome messages and order confirmations.
-
-### Zod
-Zod is a TypeScript-first schema validation library. It validates incoming data at API boundaries — such as product form inputs and authentication payloads — providing clear, type-safe error messages when data doesn't match the expected shape.
-
-### SWR + Axios
-**SWR** (Stale-While-Revalidate) is a data-fetching library from Vercel that handles caching, revalidation, and background updates with minimal setup. **Axios** is used as the HTTP client for API requests, offering interceptors, timeout handling, and cleaner error management than the native `fetch`.
-
-### Vercel Analytics + Speed Insights
-Vercel Analytics tracks real user behaviour (page views, navigation) and Speed Insights measures Core Web Vitals — giving a clear picture of how real users experience the site in production.
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
+![MongoDB](https://img.shields.io/badge/MongoDB-6-green?style=flat-square&logo=mongodb)
+![Redis](https://img.shields.io/badge/Redis-7-red?style=flat-square&logo=redis)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwindcss)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
 ---
 
-## Project Structure
+## ⚡ Tech Stack
+
+| Technology | Role | Description |
+|---|---|---|
+| **Next.js 16** | Framework | App Router, RSC, SSR, API routes |
+| **TypeScript 5** | Language | Type-safe JavaScript across the entire codebase |
+| **React 19** | UI | Component rendering with concurrent mode |
+| **MongoDB + Mongoose** | Database | Flexible document storage for products & users |
+| **Redis (ioredis)** | Cache | In-memory caching for fast data retrieval |
+| **Better-Auth** | Auth | Email/password + Google OAuth, role-based access |
+| **Tailwind CSS 4** | Styling | Utility-first CSS framework |
+| **shadcn/ui + Radix UI** | Components | Accessible, customisable UI primitives |
+| **Cloudinary** | Media | Image upload, optimisation, and CDN delivery |
+| **Inngest** | Background Jobs | Serverless workflow & event orchestration |
+| **Nodemailer** | Email | SMTP transactional email via Gmail |
+| **Zod** | Validation | Schema validation at API boundaries |
+| **SWR + Axios** | Data Fetching | Stale-while-revalidate caching + HTTP client |
+| **Vercel Analytics** | Monitoring | Real user analytics & Core Web Vitals |
+
+---
+
+## ✨ Features
+
+- 🔍 Product browsing with category filtering & search
+- 🔐 Auth — email/password & Google OAuth
+- 🛒 Persistent shopping cart
+- 👤 Protected account dashboard & order history
+- 🛡️ Admin panel for product & user management
+- 🖼️ Optimised images via Cloudinary CDN
+- 📧 Automated email workflows (Inngest + Nodemailer)
+- ⚡ Redis-backed caching
+- 📱 Fully responsive — mobile, tablet & desktop
+- 🔗 OpenGraph & Twitter card metadata
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
-├── app/                  # Next.js App Router — pages, layouts, API routes
-│   ├── (main)/           # Public-facing storefront routes
-│   ├── (auth)/           # Authentication pages (login, register)
-│   ├── (protected)/      # Authenticated user routes (account, orders)
-│   └── api/              # API route handlers
-├── components/           # Shared UI components
-├── lib/                  # Database clients, auth config, utilities
-├── models/               # Mongoose schema definitions
-└── types/                # Global TypeScript type declarations
+├── app/
+│   ├── (main)/        # Storefront routes
+│   ├── (auth)/        # Login & register pages
+│   ├── (protected)/   # Account & dashboard
+│   └── api/           # API route handlers
+├── components/        # Shared UI components
+├── lib/               # DB clients, auth config, utilities
+├── models/            # Mongoose schemas
+└── types/             # Global TypeScript types
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js 20+
-- MongoDB instance (local or Atlas)
-- Redis instance (local or cloud)
+- MongoDB instance
+- Redis instance
 - Cloudinary account
-- Google OAuth credentials (for social login)
+- Google OAuth credentials
 
-### Installation
+### Install & Run
 
 ```bash
-# Clone the repository
 git clone https://github.com/your-username/next-basket.git
 cd next-basket
-
-# Install dependencies
 npm install
+npm run dev
 ```
 
 ### Environment Variables
 
-Create a `.env` file in the project root and fill in the required values:
-
 ```env
-# App
 NEXT_PUBLIC_BASE_URL=http://localhost:5000
 
-# MongoDB
-MONGODB_URI=your_mongodb_connection_string
+MONGODB_URI=
+REDIS_URL=
 
-# Redis
-REDIS_URL=your_redis_connection_string
+BETTER_AUTH_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-# Better-Auth
-BETTER_AUTH_SECRET=your_auth_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 
-# Cloudinary
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+EMAIL_USER=
+EMAIL_PASS=
 
-# Email (Nodemailer / Gmail)
-EMAIL_USER=your_gmail_address
-EMAIL_PASS=your_gmail_app_password
-
-# Inngest
-INNGEST_EVENT_KEY=your_inngest_event_key
-INNGEST_SIGNING_KEY=your_inngest_signing_key
+INNGEST_EVENT_KEY=
+INNGEST_SIGNING_KEY=
 ```
 
-### Running Locally
+---
 
-```bash
-npm run dev
-```
+## 🌐 Deployment
 
-Open [http://localhost:5000](http://localhost:5000) in your browser.
+Optimised for **Vercel**. Connect your repo, add environment variables, and deploy.
+
+Recommended services:
+- **Database** → [MongoDB Atlas](https://www.mongodb.com/atlas)
+- **Cache** → [Upstash Redis](https://upstash.com)
+- **Media** → [Cloudinary](https://cloudinary.com)
 
 ---
 
-## Key Features
-
-- Product browsing with category filtering and search
-- User authentication — email/password and Google OAuth
-- Shopping cart with persistent state
-- Protected account dashboard and order history
-- Admin panel for product and user management
-- Optimised image delivery via Cloudinary CDN
-- Background email workflows powered by Inngest
-- Redis-backed caching for fast data retrieval
-- Fully responsive design across mobile, tablet, and desktop
-- OpenGraph and Twitter card metadata for rich social sharing
-
----
-
-## Deployment
-
-This project is optimised for deployment on **Vercel**. Connect your repository, set the environment variables in the Vercel dashboard, and deploy with a single click.
-
-For the database and cache layer, services like **MongoDB Atlas** and **Redis Cloud (Upstash)** are recommended for a fully managed, serverless-compatible setup.
-
----
-
-## License
+## 📄 License
 
 MIT
