@@ -38,9 +38,8 @@ export const metadata: Metadata = {
     "special deals",
   ],
   openGraph: {
-    title: "Next Basket Shop",
-    description:
-      "Shop trending products with fast delivery and secure checkout at Next Basket Shop.",
+    title: "Next Basket Shop – Trending Products at Great Prices",
+    description: "Discover trending products, fast delivery, secure checkout, and exclusive deals at Next Basket Shop for a better online shopping experience.",
     url: process.env.NEXT_PUBLIC_BASE_URL,
     siteName: "Next Basket Shop",
     images: [
@@ -48,7 +47,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Next Basket Shop — Shop More. Live Better.",
+        alt: "Next Basket Online Store — Shop More. Live Better.",
       },
     ],
     locale: "en_US",
@@ -56,9 +55,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Next Basket Shop",
-    description:
-      "Find curated products, secure checkout and fast shipping at Next Basket Shop.",
+    title: "Next Basket Shop – Trending Products & Fast Delivery",
+    description: "Shop curated products with secure checkout, fast shipping, exclusive deals, and trending collections at Next Basket Shop.",
     images: ["/opengraph-image"],
   },
   robots: {
