@@ -17,11 +17,10 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
   title: {
-    default: "Next Basket Shop",
-    template: "%s | Next Basket Shop for online shopping",
+    default: "Next Basket Shop – Online Shopping for Fashion & More",
+    template: "%s | Next Basket Shop"
   },
-  description:
-    "Next Basket Shop — curated products, great prices and fast shipping. Discover trending items, secure checkout and member deals.",
+  description: "Next Basket Shop offers curated products at great prices with fast shipping, secure checkout, exclusive member deals, and trending items across multiple categories.",
   keywords: [
     "shop online",
     "online shopping",
