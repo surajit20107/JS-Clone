@@ -60,7 +60,7 @@ export default function Home() {
           <div className="flex justify-center items-center gap-8 md:gap-16">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}>
+              disabled={page === 1} className="hover:cursor-pointer">
               <IoIosArrowDropleftCircle size={30} />
             </button>
             <span className="font-semibold md:font-bold md:text-xl">
@@ -68,7 +68,7 @@ export default function Home() {
             </span>
             <button
               onClick={() => setPage((prev) => prev + 1)}
-              disabled={!items.hasMore}>
+              disabled={!items.hasMore} className="hover:cursor-pointer">
               <IoIosArrowDroprightCircle size={30} />
             </button>
           </div>

@@ -11,15 +11,15 @@ export async function POST(req: Request) {
 
     const cartKey = `cart:${userId}`;
     // const currentQty = parseInt(await redis.hget(cartKey, productId)) || 0;
-    const rawQty = await redis.hget(cartKey, productId);
+    const rawQty = await redis.HGET(cartKey, productId);
     const currentQty = rawQty ? rawQty : 1;
 
     // Prevent decrement if quantity is already 1 or less
     if (currentQty == 1) {
       return NextResponse.json({ productId, quantity: currentQty });
     }
-
-    const newQty = await redis.hincrby(cartKey, productId, -1);
+    
+    const newQty = await redis.HINCRBY(cartKey, productId, -1);
 
     return NextResponse.json({ productId, quantity: newQty });
   } catch (error) {

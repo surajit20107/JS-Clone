@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     const cartKey = `cart:${userId}`;
 
-    const newQty = await redis.hincrby(cartKey, productId, 1);
+    const newQty = await redis.HINCRBY(cartKey, productId, 1);
 
     return NextResponse.json({ productId, quantity: newQty });
   } catch (error) {

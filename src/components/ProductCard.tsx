@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"
 import axios from "axios";
 
 interface Product {
@@ -25,7 +26,7 @@ export default function ProductCard({ item }: ProductCardProps) {
   const session = useSession();
   const router = useRouter();
 
-  // Destructure props from the item object (adjust based on your DB schema)
+  // Destructure props from the item object
   const {
     image,
     name,
@@ -41,9 +42,9 @@ export default function ProductCard({ item }: ProductCardProps) {
     try {
       const res = await axios.post("/api/cart", { userId, productId });
       if (res.status === 200) {
-        alert("Product added to cart");
+        toast.success("Product added to cart");
       } else {
-        alert("Failed to add product to cart");
+        toast.error("Failed to add product to cart");
       }
     } catch (error) {
       console.log(error);
@@ -62,7 +63,7 @@ export default function ProductCard({ item }: ProductCardProps) {
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Product Image */}
-      <div className="relative h-48">
+      <div className="relative h-48 w-auto">
         <Image
           src={image}
           alt={name}

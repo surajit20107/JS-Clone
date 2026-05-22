@@ -33,7 +33,7 @@ export default function Cart() {
         setIsLoading(true);
         console.log("USER_ID:", session?.user?.id);
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
-
+console.log(res)
         if (res.status === 200) {
           setCartItems(res.data?.userCart || []);
         }
@@ -52,8 +52,7 @@ export default function Cart() {
     if (!session?.user?.id) return;
 
     try {
-      const endpoint =
-        delta > 0 ? "/api/cart/increment" : "/api/cart/decrement";
+      const endpoint = delta > 0 ? "/api/cart/increment" : "/api/cart/decrement";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -109,8 +108,7 @@ export default function Cart() {
     }
   };
 
-  const subtotal =
-    cartItems?.reduce((sum, item) => sum + (item.totalPrice || 0), 0) || 0;
+  const subtotal = cartItems?.reduce((sum, item) => sum + (item.totalPrice || 0), 0) || 0;
   const tax = subtotal * 0.08; // 8% tax example
   const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50
   const total = subtotal + tax + shipping;
@@ -169,7 +167,7 @@ export default function Cart() {
                       alt={item?.productId?.name || "Product Image"}
                       width={100}
                       height={100}
-                      className="rounded-lg mb-4 sm:mb-0 sm:mr-4 object-cover"
+                      className="rounded-lg mb-4 sm:mb-0 sm:mr-4 h-auto w-auto object-cover"
                     />
                     <div className="flex-1 text-center sm:text-left">
                       <h3 className="font-semibold text-lg text-gray-800">
@@ -182,16 +180,16 @@ export default function Cart() {
                     <div className="flex items-center space-x-3 mt-4 sm:mt-0">
                       <button
                         onClick={() => updateQuantity(item.productId._id, -1)}
-                        className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
+                        className="bg-gray-200 text-gray-700 p-2 rounded-full hover:cursor-pointer hover:bg-gray-300 transition-colors"
                       >
                         <FaMinus size={14} />
                       </button>
                       <span className="px-3 py-1 bg-gray-100 rounded text-sm font-medium">
-                        {item.quantity}
+                        {item.quantity || 1}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.productId._id, 1)}
-                        className="bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 transition-colors"
+                        className="bg-gray-200 text-gray-700 p-2 rounded-full hover:cursor-pointer hover:bg-gray-300 transition-colors"
                       >
                         <FaPlus size={14} />
                       </button>
@@ -202,7 +200,7 @@ export default function Cart() {
                       </p>
                       <button
                         onClick={() => removeItem(item.productId._id)}
-                        className="text-red-500 hover:text-red-700 mt-2 transition-colors"
+                        className="text-red-500 hover:cursor-pointer hover:text-red-700 mt-2 transition-colors"
                       >
                         <FaTrash size={16} />
                       </button>
@@ -243,7 +241,7 @@ export default function Cart() {
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:cursor-pointer hover:shadow-lg"
                 >
                   Proceed to Checkout
                 </button>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { MdOutlineShoppingBag } from "react-icons/md";
-import { ModeToggle } from "./theme-toggle";
+// import { ModeToggle } from "./theme-toggle";
 
 export default function Header() {
   const pathname = usePathname();
@@ -49,7 +49,7 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              <ModeToggle />
+              {/* <ModeToggle /> */}
             </div>
 
             {/* Mobile Menu Button */}
@@ -100,7 +100,7 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              <ModeToggle />
+              {/* <ModeToggle /> */}
             </div>
           </div>
         )}

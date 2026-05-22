@@ -40,10 +40,13 @@ export async function POST(req: Request) {
       await Cart.create({
         userId,
         productId,
-        // quantity: 1,
+        quantity: 1,
         totalPrice: Number(product.price),
       });
     }
+
+    // add to redis
+    await redis.HSET(`cart:${userId}`, productId, 1);
 
     return NextResponse.json(
       { message: "Product added to cart successfully" },
@@ -74,12 +77,12 @@ export async function GET(req: Request) {
     await connectToDatabase();
 
     const dbCart = await Cart.find({ userId }).populate("productId");
-    const redisCart = (await redis.hGetAll(`cart:${userId}`)) as Record<string, string>
-
+    const redisCart = (await redis.HGETALL(`cart:${userId}`)) as Record<string, string>
+console.log(redisCart)
     // 🔁 Sync Redis if empty
     if (Object.keys(redisCart).length === 0) {
       for (const item of dbCart) {
-        await redis.hSet(
+        await redis.HSET(
           `cart:${userId}`,
           item.productId._id.toString(),
           item.quantity,
@@ -139,7 +142,7 @@ export async function DELETE(req: Request) {
     }
 
     // delete from redis
-    await redis.hdel(`cart:${userId}`, productId);
+    await redis.HDEL(`cart:${userId}`, productId);
 
     return NextResponse.json(
       { message: "Cart item deleted successfully" },
