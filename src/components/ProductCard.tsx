@@ -47,7 +47,7 @@ export default function ProductCard({ item }: ProductCardProps) {
         toast.error("Failed to add product to cart");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to add product to cart");
     }
   };
 

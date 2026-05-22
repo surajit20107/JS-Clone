@@ -73,7 +73,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const totalProducts = await Product.countDocuments();
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = 15;
+    const limit = 16;
     const skip = (page -1) * limit
     
     const products = await Product.find().skip(skip).limit(limit).select("name price image description rating")

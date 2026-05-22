@@ -13,6 +13,7 @@ import {
   FaLock,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { toast } from "sonner";
 
 export default function Account() {
   const router = useRouter();
@@ -51,12 +52,12 @@ export default function Account() {
   };
 
   const handleSave = () => {
-    // Validate and save changes to DB or API
+    // TODO: Validate and save changes to DB or API
     if (
       profileData.newPassword &&
       profileData.newPassword !== profileData.confirmPassword
     ) {
-      alert("New passwords do not match!");
+      toast.error("New passwords do not match!");
       return;
     }
     console.log("Saving changes:", profileData);
@@ -79,7 +80,7 @@ export default function Account() {
       },
     });
   };
-  console.log(session);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin button */}

@@ -6,6 +6,7 @@ import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useSession } from "@/components/SessionProvider";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import axios from "axios";
+import { toast } from "sonner";
 
 interface CartItem {
   _id: string;
@@ -31,9 +32,7 @@ export default function Cart() {
       try {
         if (!session?.user?.id) return;
         setIsLoading(true);
-        console.log("USER_ID:", session?.user?.id);
         const res = await axios.get(`/api/cart?userId=${session?.user.id}`);
-console.log(res)
         if (res.status === 200) {
           setCartItems(res.data?.userCart || []);
         }
@@ -118,13 +117,13 @@ console.log(res)
       const res = await axios.post("/api/order", {
         userId: session?.user?.id,
       });
-      console.log(res);
+
       if (res.status === 200) {
-        alert("order placed");
+        toast.success("Order placed successfully")
       }
     } catch (error) {
       console.error(error);
-      alert("Error placing order");
+      toast.error("Error placing order");
     }
   };
 

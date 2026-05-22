@@ -8,6 +8,7 @@ import { productSchema } from "@/lib/schema";
 import { CldUploadButton } from "next-cloudinary";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
+import { toast } from "sonner";
 
 type Tab = "orders" | "products";
 
@@ -83,10 +84,9 @@ export default function AdminDashboard() {
       const response = await axios.get("/api/admin/orders?page=1");
       const latestOrders = response.data.orders.slice(0, 5);
       setOrders(latestOrders);
-      console.log("orders:", latestOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
-      alert("Failed to fetch orders");
+      toast.error("Failed to fetch orders");
     }
   };
 
@@ -95,9 +95,9 @@ export default function AdminDashboard() {
       const response = await axios.get(`/api/product?page=${page}`);
       setProducts(response.data.products);
       setHashMore(response.data.hasMore);
-      console.log("All Products", products);
     } catch (error) {
       console.error("Error fetching products:", error);
+      toast.error("Failed to fetch products");
     }
   };
 
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
         return;
       }
       const data = await axios.post("/api/product", productForm);
-      console.log(data);
+
       if (data.status === 201) {
         setProducts((prev) => [...prev, data.data.product]);
         closeModal();

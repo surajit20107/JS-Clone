@@ -6,6 +6,7 @@ import {
   FaPhone,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { toast } from "sonner";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -22,9 +23,8 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission (e.g., send to API or email service)
-    console.log("Form submitted:", formData);
-    alert("Thank you for your message!");
+    // TODO: Handle form submission (e.g., send to API or email service)
+    toast.success("Thank you for your message!");
     setFormData({
       name: "",
       email: "",

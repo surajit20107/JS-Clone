@@ -78,7 +78,7 @@ export async function GET(req: Request) {
 
     const dbCart = await Cart.find({ userId }).populate("productId");
     const redisCart = (await redis.HGETALL(`cart:${userId}`)) as Record<string, string>
-console.log(redisCart)
+    
     // 🔁 Sync Redis if empty
     if (Object.keys(redisCart).length === 0) {
       for (const item of dbCart) {
