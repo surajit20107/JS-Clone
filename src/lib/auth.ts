@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
+import { expo } from "@better-auth/expo";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI as string);
@@ -52,4 +53,7 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    expo(),
+  ],
 });
