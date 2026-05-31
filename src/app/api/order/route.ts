@@ -19,7 +19,10 @@ export async function POST(req: Request) {
     let redisCart: Record<string, string> = {};
     try {
       if (redis) {
-        redisCart = (await redis.hGetAll(`cart:${userId}`)) as Record<string, string>
+        redisCart = (await redis.hGetAll(`cart:${userId}`)) as Record<
+          string,
+          string
+        >;
       }
     } catch (error) {
       console.error("Redis error:", error);
@@ -38,11 +41,15 @@ export async function POST(req: Request) {
     });
 
     // Calculate total price using Redis quantities
-    const totalPrice = userCart.reduce((sum, item) => {
+    const subtotal = userCart.reduce((sum, item) => {
       const redisQty = redisCart[item.productId._id.toString()];
       const quantity = redisQty ? parseInt(redisQty) : item.quantity;
       return sum + item.productId.price * quantity;
     }, 0);
+
+    const tax = subtotal * 0.08; // 8% tax
+    const shipping = subtotal > 1500 ? 0 : 50; // Free shipping over ₹1500
+    const totalPrice = Number((subtotal + tax + shipping).toFixed(2));
 
     // Create new order with all required fields
     const newOrder = new Order({
@@ -105,7 +112,9 @@ export async function GET(req: Request) {
 
     await connectToDatabase();
 
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate("products.product");
+    const orders = await Order.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate("products.product");
 
     if (!orders) {
       return NextResponse.json({ error: "No orders found" }, { status: 404 });
